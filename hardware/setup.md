@@ -202,3 +202,9 @@ At the bottom, enter a line like
 
 - Use ctrl-X to exit nano, indicating that you want to save.  
 - You should now be able to reboot, and confirm, both with `nmcli d` and by browsing available wifi hotspots with your phone or laptop to find `Sonar881`.
+
+### Install Docker
+
+SSH or Log in to the controller and enter:
+
+`sudo apt install docker.io`
