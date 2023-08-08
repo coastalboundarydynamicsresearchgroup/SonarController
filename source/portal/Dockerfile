@@ -1,4 +1,4 @@
-FROM node:lts-alpine
+FROM node:16
 
 LABEL version="1.0"
 LABEL description="React-based web page for managing Sonar controller"

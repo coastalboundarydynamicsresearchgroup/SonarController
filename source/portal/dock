@@ -6,5 +6,5 @@ docker container run \
 --name=sonar-portal \
 -v "$(pwd)":/app \
 -p 8080:3000 \
-louisross/portal:1.0 \
+louisross/portal:1.1 \
 /bin/bash
