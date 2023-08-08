@@ -208,3 +208,9 @@ At the bottom, enter a line like
 SSH or Log in to the controller and enter:
 
 `sudo apt install docker.io`
+
+Then add the user `sonar881` to the `docker` group:
+
+`sudo gpasswd -a sonar881 docker`
+
+And provide the sudo password `881` if required.

@@ -1,0 +1,1 @@
+docker image build -t louisross/portal:1.0 .

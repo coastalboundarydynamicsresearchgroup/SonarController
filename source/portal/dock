@@ -1,0 +1,10 @@
+#!/bin/bash
+echo $(pwd)
+docker container run \
+-it \
+--rm \
+--name=sonar-portal \
+-v "$(pwd)":/app \
+-p 8080:3000 \
+louisross/portal:1.0 \
+/bin/bash
