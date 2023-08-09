@@ -2,10 +2,10 @@ FROM node:16
 
 LABEL version="1.0"
 LABEL description="React-based web page for managing Sonar controller"
-LABEL maintainer="Louis Ross <louis.ross@gail.com>"
+LABEL maintainer="Louis Ross <louis.ross@gmail.com>"
 
 #COPY ["./package.json", "./package-lock.json", "/app/"]
-#RUN ["npm", "insall"]
+#RUN ["npm", "install"]
 
 COPY . .
 

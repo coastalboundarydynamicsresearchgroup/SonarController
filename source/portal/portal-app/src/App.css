@@ -36,3 +36,626 @@
     transform: rotate(360deg);
   }
 }
+
+body { 
+  margin: 0; 
+  padding: 0; 
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+}
+
+/* MAIN BODY */
+section.mainbody {
+  background: white;
+  color: gray;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  padding: 0;
+  padding: 0;
+}
+
+section.fullpane {
+  display: flex;
+  flex-direction: column;
+  width: 98%;
+  margin: 0 1px 0 0;
+  border-style: solid;
+  border-width: 1px;
+}
+
+section.leftpane {
+  display: flex;
+  flex-direction: column;
+  width: 69%;
+  margin: 0 1px 0 0;
+  border-style: solid;
+  border-width: 1px;
+}
+
+section.rightpane {
+  /*background-color: green;*/
+  display: flex;
+  flex-direction: column;
+  width: 29%;
+  height: 550px;
+  margin: 0 0 0 1px;
+  border-style: solid;
+  border-width: 1px;
+}
+
+div.modelLabel {
+  font-size: 16pt;
+  text-align: center;
+}
+
+
+div.connectbar {
+  font-size: 14pt;
+  text-align: center;
+  margin: 0 0 0 15px;
+}
+
+div.messagebar {
+  font-size: 8pt;
+  text-align: left;
+  margin: 0 0 0 0;
+  padding: 0 0 0 0;
+  width: 100%;
+}
+
+div.templatesLabel {
+  font-size: 16pt;
+  text-align: center;
+}
+
+div.templates {
+  margin: 10px 0 10px 0;
+  display: flex;
+  flex-direction:row;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+select#templates {
+  font-size: 10pt;
+  text-align: left;
+  margin: 0 0 0 0;
+  padding: 0 0 0 0;
+  width: 135px;
+}
+
+/* The model management collection of controls */
+div.configuration-management {
+  display: flex;
+  flex-direction:column;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items:center;
+  margin: 0 3px 0 5px;
+  padding: 2px 2px 2px 2px;
+  font-size: 12pt;
+  text-align: center;
+  background-color:rgba(0, 0, 0, 0.15);
+  border-width: 1px;
+  border-color:gray;
+  border-style: solid;
+}
+
+div.model-manager {
+  margin: 0 12px 0 0;
+  display: flex;
+  flex-direction:row;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+div.configuration-controls {
+  display: flex;
+  flex-direction:column;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items:center;
+  margin: 0 3px 0 5px;
+  font-size: 12pt;
+  text-align: center;
+  height: 210px;
+}
+
+div.model-controls button {
+  width: 75px;
+  margin: 0;
+}        
+
+#newmodel {
+  margin: 0 2px 0 0;
+  width: 128px;
+}
+
+select#modelselectlist {
+  font-size: 10pt;
+  text-align: left;
+  margin: 0 0 0 0;
+  padding: 0 0 0 0;
+  width: 135px;
+}
+
+select#modeltemplates {
+  font-size: 10pt;
+  text-align: left;
+  margin: 0 0 0 0;
+  padding: 0 0 0 0;
+  width: 135px;
+}
+
+div.population-manager {
+  margin: 0 12px 0 0;
+  display: flex;
+  flex-direction:row;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* The population management collection of controls, less the template stuff */
+div.population-management {
+  display: flex;
+  flex-direction:column;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items:center;
+  margin: 0 3px 0 5px;
+  padding: 2px 2px 2px 2px;
+  font-size: 12pt;
+  text-align: center;
+  background-color:rgba(0, 0, 0, 0.15);
+  border-width: 1px;
+  border-color:gray;
+  border-style: solid;
+}
+
+div.population-group {
+  display: flex;
+  flex-direction:row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items:stretch;
+  padding: 2px 2px 2px 2px;
+}
+
+div.population-controls {
+  display: flex;
+  flex-direction:column;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items:center;
+  margin: 0 3px 0 5px;
+  padding: 2px 2px 2px 2px;
+  font-size: 12pt;
+  text-align: center;
+  height: 210px;
+}
+
+div.population-interconnect {
+  display: flex;
+  flex-direction:column;
+  flex-wrap: wrap;
+  justify-content:flex-start;
+  align-items:center;
+  margin: 0 3px 0 5px;
+  padding: 50px 2px 2px 2px;
+  border-width: 1px;
+  border-color: gray;
+  border-style: solid;
+  font-size: 12pt;
+  text-align: center;
+  height: 210px;
+}
+
+div.interconnect-buttons {
+  display: flex;
+  flex-direction:row;
+}
+
+button.population-interconnect {
+  width: 85px;
+  text-align: center;
+}
+
+div.population-interconnect-placeholder {
+  width: 180px;
+  height: 1px;
+  margin: 0;
+}        
+
+div.population-interconnect-instructions {
+  height: 110px;
+  width: 186px;
+  display: flex;
+  flex-direction:column;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items:flex-start;
+  white-space: pre-wrap;
+  font-size: 10pt;
+  font-family: Arial, Helvetica, sans-serif;
+  text-align: left;
+  margin: 0;
+}        
+
+
+
+div.population-controls button {
+  width: 85px;
+  margin: 0;
+}        
+
+#newpopulation {
+  margin: 0 2px 0 0;
+  width: 128px;
+}
+
+select#populationselectlist {
+  font-size: 10pt;
+  text-align: left;
+  margin: 0 0 0 0;
+  padding: 0 0 0 0;
+  width: 180px;
+}
+
+option.from-index-0 {
+  color: green;
+  font-weight: normal;
+}
+option.to-index-0 {
+  color: green;
+  font-weight: bold;
+}
+option.from-index-1 {
+  color: red;
+  font-weight: normal;
+}
+option.to-index-1 {
+  color: red;
+  font-weight: bold;
+}
+option.from-index-2 {
+  color: rgb(160, 129, 129);
+  font-weight: normal;
+}
+option.to-index-2 {
+  color: rgb(160, 129, 129);
+  font-weight: bold;
+}
+option.from-index-3 {
+  color: rgb(65, 149, 197);
+  font-weight: normal;
+}
+option.to-index-3 {
+  color: rgb(65, 149, 197);
+  font-weight: bold;
+}
+option.from-index-4 {
+  color: rgb(40, 4, 196);
+  font-weight: normal;
+}
+option.to-index-4 {
+  color: rgb(40, 4, 196);
+  font-weight: bold;
+}
+option.from-index-5 {
+  color: rgb(175, 9, 197);
+  font-weight: normal;
+}
+option.to-index-5 {
+  color: rgb(175, 9, 197);
+  font-weight: bold;
+}
+option.from-index-6 {
+  color: rgb(238, 255, 0);
+  font-weight: normal;
+}
+option.to-index-6 {
+  color: rgb(238, 255, 0);
+  font-weight: bold;
+}
+option.from-index-7 {
+  color: rgb(245, 133, 68);
+  font-weight: normal;
+}
+option.to-index-7 {
+  color: rgb(245, 133, 68);
+  font-weight: bold;
+}
+option.from-index-8 {
+  color: rgb(125, 241, 207);
+  font-weight: normal;
+}
+option.to-index-8 {
+  color: rgb(125, 241, 207);
+  font-weight: bold;
+}
+option.from-index-9 {
+  color: rgb(250, 140, 140);
+  font-weight: normal;
+}
+option.to-index-9 {
+  color: rgb(250, 140, 140);
+  font-weight: bold;
+}
+option.from-index-10 {
+  color: red;
+  font-weight: normal;
+}
+option.to-index-10 {
+  color: red;
+  font-weight: bold;
+}
+option.from-index-11 {
+  color: red;
+  font-weight: normal;
+}
+option.to-index-11 {
+  color: red;
+  font-weight: bold;
+}
+option.from-index-12 {
+  color: red;
+  font-weight: normal;
+}
+option.to-index-12 {
+  color: red;
+  font-weight: bold;
+}
+option.from-index-13 {
+  color: red;
+  font-weight: normal;
+}
+option.to-index-13 {
+  color: red;
+  font-weight: bold;
+}
+option.from-index-14 {
+  color: red;
+  font-weight: normal;
+}
+option.to-index-14 {
+  color: red;
+  font-weight: bold;
+}
+option.from-index-15 {
+  color: red;
+  font-weight: normal;
+}
+option.to-index-15 {
+  color: red;
+  font-weight: bold;
+}
+option.from-index-16 {
+  color: red;
+  font-weight: normal;
+}
+option.to-index-16 {
+  color: red;
+  font-weight: bold;
+}
+option.from-index-17 {
+  color: red;
+  font-weight: normal;
+}
+option.to-index-17 {
+  color: red;
+  font-weight: bold;
+}
+option.from-index-18 {
+  color: red;
+  font-weight: normal;
+}
+option.to-index-18 {
+  color: red;
+  font-weight: bold;
+}
+option.from-index-19 {
+  color: red;
+  font-weight: normal;
+}
+option.to-index-19 {
+  color: red;
+  font-weight: bold;
+}
+
+option.import {
+  color: green;
+}
+
+option.export {
+  color: red;
+}
+
+option.feedback {
+  font-weight: bold;
+}
+
+/* The template management collection of controls */
+div.template-management {
+  display: flex;
+  flex-direction:column;
+  flex-wrap: wrap;
+  justify-content:flex-start;
+  align-items:center;
+  margin: 0 3px 0 5px;
+  padding: 2px 2px 2px 2px;
+  font-size: 12pt;
+  text-align: center;
+  background-color:rgba(0, 0, 0, 0.15);
+  border-width: 1px;
+  border-color:gray;
+  border-style: solid;
+}
+
+label#template-label {
+  width: 150px;
+}
+
+div.template-group {
+  display: flex;
+  flex-direction:row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items:stretch;
+  padding: 2px 2px 2px 2px;
+}
+
+div.template-selector {
+  display: flex;
+  flex-direction:column;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items:center;
+  margin: 0 3px 0 5px;
+  font-size: 12pt;
+  text-align: center;
+}
+
+div.template-selector button {
+  width: 75px;
+  margin: 0;
+}        
+
+#newtemplate {
+  margin: 0 2px 0 0;
+  width: 128px;
+}
+
+select#templateselectlist {
+  font-size: 10pt;
+  text-align: left;
+  margin: 0 0 0 0;
+  padding: 0 0 0 0;
+  width: 135px;
+}
+
+div.template-arrows {
+  display: flex;
+  flex-direction:column;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 0 12px 0 12px;
+  font-size: 12pt;
+  text-align: center;
+}
+
+div.template-arrows Button {
+  margin: 10px 0 10px 0;
+}
+
+div.stripchartbar {
+  font-size: 18pt;
+  text-align: center;
+  margin: 0 0 0 0;
+  padding: 0 0 0 0;
+  width: 100%;
+}
+
+
+#connectionPanel { 
+  background: rgba(0, 0, 0, 0.15); 
+  padding: 0.25rem; 
+  top: 0; 
+  left: 0; 
+  right: 0; 
+  display: flex; 
+  height: 3rem; 
+  box-sizing: border-box; 
+  backdrop-filter: blur(10px);
+}
+
+.connect-disconnect { 
+  background: #333; 
+  border: none; 
+  padding: 0 1rem; 
+  margin: 0.25rem; 
+  border-radius: 3px; 
+  outline: none; 
+  color: #fff;
+  height: 30px;
+}
+
+button.population-interconnect { 
+  background: #333; 
+  border: none; 
+  padding: 0 1rem; 
+  margin: 0.25rem; 
+  border-radius: 3px; 
+  outline: none; 
+  color: #fff;
+  height: 30px;
+}
+
+#servers {
+  margin: 0.25rem; 
+}
+
+.control-label {
+  float: left;
+  width: 30%;
+  font-size: 12pt;
+}
+
+.control-value {
+  float: left;
+  font-weight: bold;
+  font-family: monospace;
+  width: 20%;
+  font-size: 8pt;
+}
+
+.control {
+  float: right;
+  font-weight: bold;
+}
+
+.select {
+  width: 160px;
+}
+
+.property-switch {
+  vertical-align: middle;
+  margin: 8px 2px 0 4px;
+  /*margin-left: 4px;*/
+}
+
+.rightpane hr {
+  width: 50%;
+}
+
+span.loglevel {
+  width: 180px;
+}
+
+div.messages {
+  margin: auto;
+  width: 98%;
+}
+
+#messages { 
+  list-style-type: none; 
+  margin: 0;
+  padding: 0;
+  
+  resize: none;
+  width: 100%;
+}
+
+#status { 
+  list-style-type: none; 
+  margin: 0;
+  padding: 0;
+  
+  resize: none;
+  width: 100%;
+}
+
+/* FOOTER */
+footer {
+  font-size: 8pt;
+  text-align: center;
+}

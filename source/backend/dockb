@@ -1,0 +1,2 @@
+#!/bin/bash
+docker image build -t louisross/sonar-backend:1.0 .

@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# Update and install node and npm
+echo apt-get update
+apt-get update
+curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
+apt-get install -y nodejs
+apt-get install -y npm
+
+#RUN npm install --production
+npm install
+npm install
