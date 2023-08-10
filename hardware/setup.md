@@ -214,3 +214,19 @@ Then add the user `sonar881` to the `docker` group:
 `sudo gpasswd -a sonar881 docker`
 
 And provide the sudo password `881` if required.
+
+Also, install docker Compose:
+
+`mkdir -p ~/.docker/cli-plugins/`
+
+`curl -SL https://github.com/docker/compose/releases/download/v2.20.2/docker-compose-linux-x86_64 -o ~/.docker/cli-plugins/docker-compose`
+
+`chmod +x ~/.docker/cli-plugins/docker-compose`
+
+To verify that the installation was successful, you can run:
+
+`docker compose version`
+
+Confirm the output:
+
+`Docker Compose version v2.20.2`

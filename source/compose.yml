@@ -3,19 +3,24 @@ services:
     container_name: sonar-backend
     build: ./backend/
     image: "louisross/sonar-backend:1.1"
+    tty: true
+    command: 'npm start'
     ports:
       - 5000:5000
     volumes:
+      - "./backend:/usr/src/app"
       - "./configuration/:/configuration"
       - "/mnt/m2/sonar/:/sonar"
-    depends_on:
   sonar-portal:
     container_name: sonar-portal
     build: "./portal"
     image: "louisross/portal:1.1"
+    tty: true
+    command: 'npm start'
     ports:
       - 8080:3000
     volumes:
-      - "./configuration/:/configuration"
+      - "./portal/:/app"
+      - "./configuration/:/app/portal-app/src/configuration"
     depends_on:
       - sonar-backend

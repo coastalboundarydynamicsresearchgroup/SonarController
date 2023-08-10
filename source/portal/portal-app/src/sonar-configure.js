@@ -27,7 +27,6 @@ const SonarConfigure = () => {
     
     return (
         <div className="configuration-management">
-            Hi
           <div className="configuration-controls">
             <input id="newconfiguration" type="text"></input>
             <select name="configurationsselectlist" id="configurationsselectlist" onChange={handleConfigurationSelectionClick} size="9">
@@ -35,6 +34,7 @@ const SonarConfigure = () => {
                 <option key={configuration} value={configuration}>{configuration}</option>
               ))}
              </select>
+             Configurations
            </div>
         </div>
     )
