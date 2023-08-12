@@ -116,12 +116,30 @@ div.configurations {
   justify-content: center;
 }
 
+div.configurationfield {
+  font-size: 9pt;
+  margin: 10px 5px 10px 10px;
+  display: flex;
+  flex-direction:column;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
 div.configurationrow {
-  margin: 10px 0 10px 0;
+  margin: 0 0 2px 0;
   display: flex;
   flex-direction:row;
   flex-wrap: wrap;
   justify-content: center;
+}
+
+div.configurationgroup {
+  margin: 2px 0 0 0;
+  font-size: 12pt;
+  justify-content: center;
+  border-width: 1px;
+  border-color:gray;
+  border-style: solid;
 }
 
 div.configurationbox {
