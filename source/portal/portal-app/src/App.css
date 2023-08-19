@@ -143,7 +143,6 @@ div.configurationgroup {
 }
 
 div.configurationbox {
-  margin: 10px 0 10px 0;
   display: flex;
   flex-direction:column;
   flex-wrap: wrap;
@@ -163,7 +162,6 @@ div.configuration-management {
   display: flex;
   flex-direction:column;
   flex-wrap: wrap;
-  justify-content: space-between;
   align-items:center;
   margin: 0 3px 0 5px;
   padding: 2px 2px 2px 2px;
@@ -192,12 +190,32 @@ div.configuration-controls {
   margin: 0 3px 0 5px;
   font-size: 12pt;
   text-align: center;
-  height: 210px;
+  height: 320px;
 }
 
-div.model-controls button {
+div.configuration-buttons {
+  display: flex;
+  flex-direction:column;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  align-items:center;
+  margin: 0 10px 0 5px;
+  font-size: 12pt;
+  text-align: center;
+}
+
+div.configuration-buttonrow {
+  margin: 0 0 2px 0;
+  display: flex;
+  flex-direction:row;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+div.configuration-buttons button {
+  margin: 10px 3px 0 3px;
   width: 75px;
-  margin: 0;
+  text-align: center;
 }        
 
 #newmodel {
