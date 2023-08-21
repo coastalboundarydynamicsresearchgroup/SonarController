@@ -20,7 +20,7 @@ const SonarConfigButtons = ({getStateFunc, onCreateFunc, onSaveFunc, onDeleteFun
   }
 
   const SaveButtonEnabled = () => {
-    return GetSelectedConfiguration() >= 0 && getStateFunc('valuetouched');
+    return GetSelectedConfiguration() >= 0 && !getStateFunc('nametouched') && getStateFunc('valuetouched');
   }
 
   const DeleteButtonEnabled = () => {

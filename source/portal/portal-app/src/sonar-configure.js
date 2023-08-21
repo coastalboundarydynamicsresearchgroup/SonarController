@@ -16,49 +16,46 @@ const SonarConfigure = ({getState, setState}) => {
       fetch(baseBackendUrl + '/configurations', { method: 'GET', mode: 'cors' })
       .then(data => data.json())
       .then(response => {
-        console.log(response);
         setConfigurations([...response]);
         if (messages) {
           messages.value += 'Retrieved configurations ' + response + '\n'
         }
-        console.log(`Setting selected index to ${selectedConfiguration}`)
         document.getElementById("configurationsselectlist").selectedIndex = selectedConfiguration;
-      });
-    }, [configurationChanged]);
-    
-    useEffect(() => {
-      const messages = document.getElementById('messages');
-      const configName = document.getElementById("newconfiguration").value;
-      fetch(baseBackendUrl + '/configuration/' + configName, { method: 'GET', mode: 'cors' })
-      .then(data => data.json())
-      .then(response => {
-        console.log(response);
-        DistributeConfiguration(response);
-        if (messages) {
-          messages.value += 'Retrieved configuration ' + configName + ': ' + response + '\n'
+        const configName = document.getElementById("configurationsselectlist").value;
+        document.getElementById("newconfiguration").value = configName;
+        if (configName) {
+          fetch(baseBackendUrl + '/configuration/' + configName, { method: 'GET', mode: 'cors' })
+          .then(data => data.json())
+          .then(response => {
+            DistributeConfiguration(response);
+            setState('nametouched', false);
+            setState('valuetouched', false);
+            if (messages) {
+              messages.value += `Retrieved configuration ${configName}\n`;
+            }
+          });
         }
       });
-    }, [selectedConfiguration]);
+    }, [configurationChanged, selectedConfiguration]);
     
-    
-    const isDirty = () => {
-        return getState('dirty');
-    }
-
     const onCreate = () => {
-      WriteConfiguration();
-      setConfigurationChanged(configurationChanged + 1);
+      WriteConfiguration(() => {
+        setConfigurationChanged(configurationChanged + 1);
+      });
     }
   
     const onSave = () => {
-      WriteConfiguration();
-      setConfigurationChanged(configurationChanged + 1);
+      WriteConfiguration(() => {
+        setConfigurationChanged(configurationChanged + 1);
+      });
     }
   
     const onDelete = () => {
-      DeleteConfiguration();
-      setConfigurationChanged(configurationChanged + 1);
-    }
+      DeleteConfiguration(() => {
+        setSelectedConfiguration(0);
+        setConfigurationChanged(configurationChanged + 1);
+      });
+  }
 
     const onDeploy = () => {
       console.log(`Deploying configuration`);

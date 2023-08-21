@@ -11,10 +11,8 @@ const SonarControl = () => {
         switch(stateName)
         {
             case 'nametouched':
-                console.log(`Getting state ${stateName} as ${configNameTouched}`);
                 return configNameTouched;
             case 'valuetouched':
-                console.log(`Getting state ${stateName} as ${configValueTouched}`);
                 return configValueTouched;
             default:
                 return false;
@@ -22,7 +20,6 @@ const SonarControl = () => {
     }
 
     const setState = (stateName, value) => {
-        console.log(`Setting state ${stateName} to ${value}`);
         switch(stateName)
         {
             case 'nametouched':

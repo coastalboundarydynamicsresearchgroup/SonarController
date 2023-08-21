@@ -80,7 +80,7 @@ const ValidateFloatField = (fieldName, minValue, maxValue) => {
   return parsedFloat;
 }
 
-const WriteConfiguration = () => {
+const WriteConfiguration = (onDoneHandler) => {
   isValidInput = true;
 
   var deployment = {};
@@ -112,11 +112,11 @@ const WriteConfiguration = () => {
   const configuration = {"deployment": deployment, "downward": downward, "THREED": THREED};
 
   if (isValidInput) {
-    PutConfiguration(configuration);
+    PutConfiguration(configuration, onDoneHandler);
   }
 }
 
-const PutConfiguration = (configuration) => {
+const PutConfiguration = (configuration, onDoneHandler) => {
     const messages = document.getElementById('messages');
 
     var init = {
@@ -138,10 +138,11 @@ const PutConfiguration = (configuration) => {
       else {
         messages.value += 'Error writing configuration with status ' + response.status + '\n';
       }
+      onDoneHandler();
     });
 }
 
-const DeleteConfiguration = () => {
+const DeleteConfiguration = (onDoneHandler) => {
   const messages = document.getElementById('messages');
 
   var init = {
@@ -162,6 +163,7 @@ const DeleteConfiguration = () => {
     else {
       messages.value += 'Error deleting configuration with status ' + response.status + '\n';
     }
+    onDoneHandler();
   });
 }
 
