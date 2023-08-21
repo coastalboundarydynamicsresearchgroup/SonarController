@@ -7,10 +7,6 @@ const baseBackendUrl = 'http://' + configuration.services.backend.host + ':' + c
 
 const SonarConfigBox = ({onChangeFunc}) => {
 
-    const HandleFieldChange = (fieldName, value) => {
-      console.log(`New value: ${value}`);
-    }
-
     return (
         <div className="configurationbox">
           <div className="configurationgroup">
@@ -45,15 +41,15 @@ const SonarConfigBox = ({onChangeFunc}) => {
           <div className="configurationgroup">
             3D
             <div className="configurationrow">
-              <SonarConfigField fieldname="3dpencilbeamrange" fieldTitle="Pencil Beam Range" initialValue="2" onChangeFunc={onChangeFunc}></SonarConfigField>
-              <SonarConfigField fieldname="3dfrequency" fieldTitle="Frequency" initialValue="165" onChangeFunc={onChangeFunc}></SonarConfigField>
-              <SonarConfigField fieldname="3dpencilbeamlogf" fieldTitle="Pencil Beam logf Value" initialValue="1" onChangeFunc={onChangeFunc}></SonarConfigField>
-              <SonarConfigField fieldname="3dpencilbeamstartgain" fieldTitle="Pencil Beam Start Gain" initialValue="30" onChangeFunc={onChangeFunc}></SonarConfigField>
+              <SonarConfigField fieldname="THREEDpencilbeamrange" fieldTitle="Pencil Beam Range" initialValue="2" onChangeFunc={onChangeFunc}></SonarConfigField>
+              <SonarConfigField fieldname="THREEDfrequency" fieldTitle="Frequency" initialValue="165" onChangeFunc={onChangeFunc}></SonarConfigField>
+              <SonarConfigField fieldname="THREEDpencilbeamlogf" fieldTitle="Pencil Beam logf Value" initialValue="1" onChangeFunc={onChangeFunc}></SonarConfigField>
+              <SonarConfigField fieldname="THREEDpencilbeamstartgain" fieldTitle="Pencil Beam Start Gain" initialValue="30" onChangeFunc={onChangeFunc}></SonarConfigField>
             </div>
             <div className="configurationrow">
-              <SonarConfigField fieldname="3dpencilbeamabsorption" fieldTitle="Pencil Beam Absorption" initialValue="60" onChangeFunc={onChangeFunc}></SonarConfigField>
-              <SonarConfigField fieldname="3dpencilbeampulselength" fieldTitle="Pencil Beam Pulse Length" initialValue="20" onChangeFunc={onChangeFunc}></SonarConfigField>
-              <SonarConfigField fieldname="3dmodechoice" fieldTitle="3D Mode Choice" initialValue="1" onChangeFunc={onChangeFunc}></SonarConfigField>
+              <SonarConfigField fieldname="THREEDpencilbeamabsorption" fieldTitle="Pencil Beam Absorption" initialValue="60" onChangeFunc={onChangeFunc}></SonarConfigField>
+              <SonarConfigField fieldname="THREEDpencilbeampulselength" fieldTitle="Pencil Beam Pulse Length" initialValue="20" onChangeFunc={onChangeFunc}></SonarConfigField>
+              <SonarConfigField fieldname="THREEDmodechoice" fieldTitle="3D Mode Choice" initialValue="1" onChangeFunc={onChangeFunc}></SonarConfigField>
             </div>
           </div>
         </div>

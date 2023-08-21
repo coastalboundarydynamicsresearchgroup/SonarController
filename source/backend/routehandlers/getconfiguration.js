@@ -5,10 +5,11 @@ const { exec } = require("child_process");
 // Pass the request to a python backend script, accepting the response
 // through its stdout.
 //
-var getConfigurations = function(req, res) {
-  console.log(`GET configuration names`);
+var getConfiguration = function(req, res) {
+  const { configurationName } = req.params;
+  console.log(`GET configuration ${configurationName}`);
 
-  exec(`python configuration-enumerator.py`, (error, stdout, stderr) => {
+  exec(`python configuration-getter.py ${configurationName}`, (error, stdout, stderr) => {
     if (error) {
       console.log(`error: ${error.message}`);
       if (stderr) {
@@ -16,11 +17,11 @@ var getConfigurations = function(req, res) {
       }
       res.status(error.code).send(error.message)
     } else {
-      console.log(`Enumerated configuration names: ${stdout}`);
+      console.log(`Read configuration: ${stdout}`);
       res.set('Access-Control-Allow-Origin', '*');
       res.json(JSON.parse(stdout));
     }
   });
 }
 
-module.exports = getConfigurations;
+module.exports = getConfiguration;

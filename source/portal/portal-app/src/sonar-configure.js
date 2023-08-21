@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import './App.css';
+import { DistributeConfiguration, WriteConfiguration, DeleteConfiguration } from './sonar-configpersist';
 import configuration from './configuration/configuration.json';
 import SonarConfigButtons from './sonar-configbuttons'
 const baseBackendUrl = 'http://' + configuration.services.backend.host + ':' + configuration.services.backend.port;
@@ -7,20 +8,37 @@ const baseBackendUrl = 'http://' + configuration.services.backend.host + ':' + c
 
 const SonarConfigure = ({getState, setState}) => {
     const [configurations, setConfigurations] = useState([]);
-    const [selectedConfiguration, setSelectedConfiguration] = useState('');
+    const [configurationChanged, setConfigurationChanged] = useState(0);
+    const [selectedConfiguration, setSelectedConfiguration] = useState(0);
 
     useEffect(() => {
-        const messages = document.getElementById('messages');
-        fetch(baseBackendUrl + '/configurations', { method: 'GET', mode: 'cors' })
-        .then(data => data.json())
-        .then(response => {
-          console.log(response);
-          setConfigurations([...response]);
-          if (messages) {
-            messages.value += 'Retrieved configurations ' + response + '\n'
-          }
-        });
-      }, []);
+      const messages = document.getElementById('messages');
+      fetch(baseBackendUrl + '/configurations', { method: 'GET', mode: 'cors' })
+      .then(data => data.json())
+      .then(response => {
+        console.log(response);
+        setConfigurations([...response]);
+        if (messages) {
+          messages.value += 'Retrieved configurations ' + response + '\n'
+        }
+        console.log(`Setting selected index to ${selectedConfiguration}`)
+        document.getElementById("configurationsselectlist").selectedIndex = selectedConfiguration;
+      });
+    }, [configurationChanged]);
+    
+    useEffect(() => {
+      const messages = document.getElementById('messages');
+      const configName = document.getElementById("newconfiguration").value;
+      fetch(baseBackendUrl + '/configuration/' + configName, { method: 'GET', mode: 'cors' })
+      .then(data => data.json())
+      .then(response => {
+        console.log(response);
+        DistributeConfiguration(response);
+        if (messages) {
+          messages.value += 'Retrieved configuration ' + configName + ': ' + response + '\n'
+        }
+      });
+    }, [selectedConfiguration]);
     
     
     const isDirty = () => {
@@ -28,15 +46,18 @@ const SonarConfigure = ({getState, setState}) => {
     }
 
     const onCreate = () => {
-      console.log(`Creating configuration`);
+      WriteConfiguration();
+      setConfigurationChanged(configurationChanged + 1);
     }
   
     const onSave = () => {
-        console.log(`Saving configuration`);
+      WriteConfiguration();
+      setConfigurationChanged(configurationChanged + 1);
     }
   
     const onDelete = () => {
-      console.log(`Deleting configuration`);
+      DeleteConfiguration();
+      setConfigurationChanged(configurationChanged + 1);
     }
 
     const onDeploy = () => {
@@ -44,12 +65,15 @@ const SonarConfigure = ({getState, setState}) => {
     }
 
     const handleConfigurationSelectionClick = (selectedConfiguration) => {
+      const messages = document.getElementById('messages');
+
       const clickedConfiguration = document.getElementById("configurationsselectlist").value;
-      setSelectedConfiguration(clickedConfiguration);
+      setSelectedConfiguration(document.getElementById("configurationsselectlist").selectedIndex);
 
       document.getElementById("newconfiguration").value = clickedConfiguration;
       setState('nametouched', false);
-      console.log(`Selected configuration ${clickedConfiguration}`);
+
+      messages.value += `Selected configuration ${clickedConfiguration}\n`;
     }
     
     
