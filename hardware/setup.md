@@ -217,7 +217,40 @@ At the bottom, enter a line like
 
 ![nmcli d command](nmcli_command.png)
 
-- The above procedure is a proof of concept, not a permanent solution, because it requires you to enable the wifi hotspot manually after every boot.  To enable the wifi hotspot automatically on every boot, we will create a cron job that runs on startup.  The cron job will run a shell script, so we need to provide that as well.
+You should also see a hotspot called Sonar881 visible to your laptop, phone, or tablet.  Don't connect to it yet; we are not done.
+
+Log into the SBC and change to the network-manager directory that controls the hotspot:
+
+`cd /etc/NetworkManager/system-connections`
+
+`ls -al`
+
+When you instructed network-manager to create a hotspot above, it wrote a file in this directory called `Hotspot.nmconnection`.  Edit this file:
+
+`sudo nano Hotspot.nmconnection`
+
+Edit or create the `[ipv4]` section as needed so it looks like this:
+
+`[ipv4]`
+
+`dns-search=`
+
+`method=shared`
+
+`address1=10.42.<N>.1/24,10.42.<N>.1`
+
+The &lt;N&gt; in the address1 line should be unique for each controller SBC.  This will allow you to run more than one in the same local area without conflict.
+
+To make the above change take effect, restart the network-manager service:
+
+`sudo service NetworkManager restart`
+
+and then re-issue the manual hotspot command:
+
+`sudo nmcli d wifi hotspot ifname wlo1 ssid Sonar881 password Sonar881`
+
+
+The above procedure is a proof of concept, not a permanent solution, because it requires you to enable the wifi hotspot manually after every boot.  To enable the wifi hotspot automatically on every boot, we will create a cron job that runs on startup.  The cron job will run a shell script, so we need to provide that as well.
 
 - Let's add the shell script first.  This git repository contains three files in the bootfiles/ directory called start-hotspot1.sh, start-hotspot2.sh, and start-hotspot3.sh.  The three files provide unique SSIDs (Sonar1, Sonar2, and Sonar3) for up to three different controllers.  It should be straightforward to extend the pattern for more.  Copy one of these files onto the SBC, changing its name to omit the final digit of the filename.  One way, would be:
 
