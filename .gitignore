@@ -128,3 +128,8 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# Temporary local files.
+source/configuration/configuration.json
+source/explore/sonar.dat
+source/explore/__pycache__
