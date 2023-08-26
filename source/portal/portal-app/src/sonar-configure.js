@@ -6,7 +6,7 @@ import SonarConfigButtons from './sonar-configbuttons'
 const baseBackendUrl = 'http://' + configuration.services.backend.host + ':' + configuration.services.backend.port;
 
 
-const SonarConfigure = ({getState, setState}) => {
+const SonarConfigure = ({getState, setState, onTestClicked}) => {
     const [configurations, setConfigurations] = useState([]);
     const [configurationChanged, setConfigurationChanged] = useState(0);
     const [selectedConfiguration, setSelectedConfiguration] = useState(0);
@@ -85,7 +85,7 @@ const SonarConfigure = ({getState, setState}) => {
              </select>
              Configurations
            </div>
-         <SonarConfigButtons getStateFunc={getState} onCreateFunc={onCreate} onSaveFunc={onSave} onDeleteFunc={onDelete} onDeployFunc={onDeploy}/>
+         <SonarConfigButtons getStateFunc={getState} onCreateFunc={onCreate} onSaveFunc={onSave} onDeleteFunc={onDelete} onDeployFunc={onDeploy} onTestClicked={onTestClicked} />
         </div>
     )
 }
