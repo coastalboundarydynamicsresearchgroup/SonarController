@@ -1,0 +1,21 @@
+
+minutes after hour=5
+pencil beam images to average=1
+seconds between samples=600
+minutes for downward sampling=0
+azimuth increment in degrees=2.400000
+pencil beam range value for 3d mode=2
+frequency value for 3d mode=165
+pencil beam logf value for 3d mode=1
+pencil beam start gain for 3d mode=30
+pencil beam absorption value for 3d mode=60
+pencil beam pulse length for 3d mode=20
+3d mode choice=1
+serial send choice=0
+pencil beam range value for downward mode=4
+frequency value for downward mode=165
+pencil beam logf value for downward mode=1
+pencil beam start gain for downward mode=30
+pencil beam absorption value for downward mode=60
+pencil beam pulse length for downward mode=4
+pencil beam data points=50
