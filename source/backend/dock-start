@@ -4,6 +4,7 @@ docker container run \
 -it \
 --rm \
 --name=sonar-backend \
+--device /dev/ttyUSB0 \
 -v "$(pwd)":/usr/src/app \
 -v "$(pwd)/../configuration/:/configuration" \
 -v "/mnt/m2/sonar/:/sonar" \
