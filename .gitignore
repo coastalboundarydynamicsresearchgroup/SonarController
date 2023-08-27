@@ -133,3 +133,4 @@ dist
 source/configuration/configuration.json
 source/explore/sonar.dat
 source/explore/__pycache__
+source/backend/explore/__pycache__/sonar.cpython-311.pyc
