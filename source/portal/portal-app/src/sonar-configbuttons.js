@@ -3,7 +3,7 @@ import './App.css';
 import configuration from './configuration/configuration.json';
 const baseBackendUrl = 'http://' + configuration.services.backend.host + ':' + configuration.services.backend.port;
 
-const SonarConfigButtons = ({getStateFunc, onCreateFunc, onSaveFunc, onDeleteFunc, onDeployFunc, onTestClicked}) => {
+const SonarConfigButtons = ({getStateFunc, onCreateFunc, onSaveFunc, onDeleteFunc, onDeployFunc, onTestClicked, test}) => {
 
   const GetSelectedConfiguration = () => {
     var selectedConfiguration = -1;
@@ -28,7 +28,7 @@ const SonarConfigButtons = ({getStateFunc, onCreateFunc, onSaveFunc, onDeleteFun
   }
 
   const DeployButtonEnabled = () => {
-    return GetSelectedConfiguration() >= 0 && !getStateFunc('nametouched') && !getStateFunc('valuetouched');
+    return test || GetSelectedConfiguration() >= 0 && !getStateFunc('nametouched') && !getStateFunc('valuetouched');
   }
 
   return (

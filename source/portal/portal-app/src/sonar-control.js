@@ -51,8 +51,8 @@ const SonarControl = () => {
             <div className="messages">
                 <div className="configurationsLabel">Select a configuration, edit, and deploy</div>
                 <div className="configurations">
-                    <SonarConfigure getState={getState} setState={setState} onTestClicked={onTestClicked} />
-                    <SonarConfigBox  onChangeFunc={() => setState('valuetouched', true)} test={test}/>
+                    <SonarConfigure getState={getState} setState={setState} onTestClicked={onTestClicked} test={test} />
+                    <SonarConfigBox  onChangeFunc={() => setState('valuetouched', true)} test={test} />
                 </div>
                 <textarea name="messages" id="messages" cols="120" rows="8" readOnly></textarea>
                 <textarea name="status" id="status" cols="120" rows="5" readOnly></textarea>

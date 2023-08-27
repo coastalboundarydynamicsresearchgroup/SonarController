@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import './App.css';
 import { DistributeConfiguration, WriteConfiguration, DeleteConfiguration } from './sonar-configpersist';
+import SendSwitchCommand from './sonar-communication';
 import configuration from './configuration/configuration.json';
 import SonarConfigButtons from './sonar-configbuttons'
 const baseBackendUrl = 'http://' + configuration.services.backend.host + ':' + configuration.services.backend.port;
 
 
-const SonarConfigure = ({getState, setState, onTestClicked}) => {
+const SonarConfigure = ({getState, setState, onTestClicked, test}) => {
     const [configurations, setConfigurations] = useState([]);
     const [configurationChanged, setConfigurationChanged] = useState(0);
     const [selectedConfiguration, setSelectedConfiguration] = useState(0);
@@ -58,7 +59,13 @@ const SonarConfigure = ({getState, setState, onTestClicked}) => {
   }
 
     const onDeploy = () => {
-      console.log(`Deploying configuration`);
+      if (test) {
+        SendSwitchCommand(test, () => {
+
+        });
+      } else {
+        console.log(`Deploying configuration`);
+      }
     }
 
     const handleConfigurationSelectionClick = (selectedConfiguration) => {
@@ -85,7 +92,7 @@ const SonarConfigure = ({getState, setState, onTestClicked}) => {
              </select>
              Configurations
            </div>
-         <SonarConfigButtons getStateFunc={getState} onCreateFunc={onCreate} onSaveFunc={onSave} onDeleteFunc={onDelete} onDeployFunc={onDeploy} onTestClicked={onTestClicked} />
+         <SonarConfigButtons getStateFunc={getState} onCreateFunc={onCreate} onSaveFunc={onSave} onDeleteFunc={onDelete} onDeployFunc={onDeploy} onTestClicked={onTestClicked} test={test} />
         </div>
     )
 }
