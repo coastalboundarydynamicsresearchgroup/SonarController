@@ -216,7 +216,21 @@ div.configuration-buttons button {
   margin: 10px 3px 0 3px;
   width: 75px;
   text-align: center;
-}        
+}
+
+div.sonardata {
+  margin: 0 0 2px 0;
+  display: flex;
+  flex-direction:row;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+div.pingdata {
+  width: 1px;
+  height: 10px;
+  border: none;
+}
 
 #newmodel {
   margin: 0 2px 0 0;

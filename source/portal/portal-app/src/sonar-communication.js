@@ -9,17 +9,18 @@ const DistributeSwitchResponse = (response, test) => {
     return;
   }
   
-  document.getElementById("resp_header").value = response.resp_header;
-  document.getElementById("resp_headid").value = response.resp_headid;
+  console.log(JSON.stringify(response.response));
+  document.getElementById("resp_header").value = response.response.header;
+  document.getElementById("resp_headid").value = response.response.headid;
 
-  document.getElementById("resp_serial_V5").value = response.resp_serial_V5;
-  document.getElementById("resp_serial_switches").value = response.resp_serial_switches;
-  document.getElementById("resp_serial_overrun").value = response.resp_serial_overrun;
-  document.getElementById("resp_headpos").value = response.resp_headpos;
+  document.getElementById("resp_serial_V5").value = response.response.serialstatus & 1 ? "V5" : "Pre-V5";
+  document.getElementById("resp_serial_switches").value = response.response.serialstatus & 64 ? "True" : "False";
+  document.getElementById("resp_serial_overrun").value = response.response.serialstatus & 128 ? "True" : "False";
+  document.getElementById("resp_headpos").value = response.response.headpos;
 
-  document.getElementById("resp_headrange").value = response.resp_headrange;
-  document.getElementById("resp_profilerange").value = response.resp_profilerange;
-  document.getElementById("resp_bytecount").value = response.resp_bytecount;
+  document.getElementById("resp_headrange").value = response.response.range;
+  document.getElementById("resp_profilerange").value = response.response.profilerange;
+  document.getElementById("resp_bytecount").value = response.response.databytes;
 }
 
 var isValidInput = true;
@@ -102,6 +103,8 @@ const SendSwitchCommand = (test, onDoneHandler) => {
   switchParameters.gain = ValidateIntField("gain", 0, 40);
   switchParameters.logf = ValidateIntField("logf", 10, 40, 10);
   switchParameters.absorption = ValidateFloatField("absorption", 0.0, 2.55, 0.01);
+  switchParameters.train_angle = ValidateIntField("train_angle", -180.0, 180, 3);
+  switchParameters.step_size = ValidateFloatField("step_size", 0.0, 2.4, 0.3);
   switchParameters.pulse_length = ValidateIntField("pulse_length", 10, 1000, 10);
   switchParameters.data_points = ValidateIntField("data_points", 250, 500, 250);
   switchParameters.profile = ValidateIntField("profile", 0, 1);
@@ -129,12 +132,13 @@ const GetSwitchResponse = (switchParameters, test, onDoneHandler) => {
     .then(response => {
       if (response.status === 201) {
         messages.value += 'Sent switch command with status ' + response.status + '\n';
-        DistributeSwitchResponse(response, test);        
+        DistributeSwitchResponse(response, test);
+        onDoneHandler(response.response.data);
       }
       else {
         messages.value += 'Error sending switch command with status ' + response.status + '\n';
+        onDoneHandler();
       }
-      onDoneHandler();
     });
 }
 

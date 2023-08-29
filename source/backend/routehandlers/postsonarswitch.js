@@ -26,7 +26,7 @@ var postSonarSwitch = function(req, res) {
       console.log(`Sonar switch transacted:\n${stdout}`);
       res.set('Access-Control-Allow-Origin', '*');
       var response = {
-        response: `Sonar switch command transacted`,
+        response: JSON.parse(stdout),
         status: 201
       };
       res.json(response);

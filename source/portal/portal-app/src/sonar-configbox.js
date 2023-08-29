@@ -7,10 +7,10 @@ import configuration from './configuration/configuration.json';
 const baseBackendUrl = 'http://' + configuration.services.backend.host + ':' + configuration.services.backend.port;
 
 
-const SonarConfigBox = ({onChangeFunc, test}) => {
+const SonarConfigBox = ({onChangeFunc, pingdata, test}) => {
     return (
       <>
-        {test ? <SonarConfigBoxTest onChangeFunc={onChangeFunc}/> : <SonarConfigBoxNormal onChangeFunc={onChangeFunc} />}
+        {test ? <SonarConfigBoxTest pingdata={pingdata} onChangeFunc={onChangeFunc}/> : <SonarConfigBoxNormal onChangeFunc={onChangeFunc} />}
       </>
     );
 }

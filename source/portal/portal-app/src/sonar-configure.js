@@ -7,7 +7,7 @@ import SonarConfigButtons from './sonar-configbuttons'
 const baseBackendUrl = 'http://' + configuration.services.backend.host + ':' + configuration.services.backend.port;
 
 
-const SonarConfigure = ({getState, setState, onTestClicked, test}) => {
+const SonarConfigure = ({getState, setState, onTestClicked, onPingData, test}) => {
     const [configurations, setConfigurations] = useState([]);
     const [configurationChanged, setConfigurationChanged] = useState(0);
     const [selectedConfiguration, setSelectedConfiguration] = useState(0);
@@ -60,8 +60,9 @@ const SonarConfigure = ({getState, setState, onTestClicked, test}) => {
 
     const onDeploy = () => {
       if (test) {
-        SendSwitchCommand(test, () => {
-
+        SendSwitchCommand(test, (pingdata) => {
+          console.log(`Passing ping data ${pingdata}`);
+          onPingData(pingdata);
         });
       } else {
         console.log(`Deploying configuration`);

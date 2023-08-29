@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import './App.css';
 import SonarConfigField from './sonar-configfield';
+import SonarPingData from './sonar-pingdata';
 import configuration from './configuration/configuration.json';
 const baseBackendUrl = 'http://' + configuration.services.backend.host + ':' + configuration.services.backend.port;
 
 
-const SonarConfigBoxTest = ({onChangeFunc}) => {
+const SonarConfigBoxTest = ({pingdata, onChangeFunc}) => {
     return (
         <div className="configurationbox">
           <div className="configurationgroup">
@@ -15,6 +16,10 @@ const SonarConfigBoxTest = ({onChangeFunc}) => {
               <SonarConfigField fieldname="gain" fieldTitle="Gain (0-40db) inc=1" initialValue="30" onChangeFunc={onChangeFunc}></SonarConfigField>
               <SonarConfigField fieldname="logf" fieldTitle="Logf (10, 20, 30, 40db)" initialValue="20" onChangeFunc={onChangeFunc}></SonarConfigField>
               <SonarConfigField fieldname="absorption" fieldTitle="Absorption (0.00-2.55db) inc=0.01" initialValue="0.60" onChangeFunc={onChangeFunc}></SonarConfigField>
+            </div>
+            <div className="configurationrow">
+              <SonarConfigField fieldname="train_angle" fieldTitle="Train Angle (-180-180deg) inc=3" initialValue="0" onChangeFunc={onChangeFunc}></SonarConfigField>
+              <SonarConfigField fieldname="step_size" fieldTitle="Step Size (0-2.4deg) inc 0.3" initialValue="1.2" onChangeFunc={onChangeFunc}></SonarConfigField>
             </div>
             <div className="configurationrow">
               <SonarConfigField fieldname="pulse_length" fieldTitle="Pulse Length (10-1000us) inc=10" initialValue="200" onChangeFunc={onChangeFunc}></SonarConfigField>
@@ -42,6 +47,7 @@ const SonarConfigBoxTest = ({onChangeFunc}) => {
               <SonarConfigField fieldname="resp_bytecount" fieldTitle="Byte Count" initialValue="4" onChangeFunc={onChangeFunc}></SonarConfigField>
             </div>
           </div>
+          <SonarPingData pingdata={pingdata} />
         </div>
     )
 }
