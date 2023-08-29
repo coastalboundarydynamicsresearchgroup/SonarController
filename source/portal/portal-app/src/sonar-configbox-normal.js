@@ -12,13 +12,7 @@ const SonarConfigBoxNormal = ({onChangeFunc}) => {
             Deployment
             <div className="configurationrow">
               <SonarConfigField fieldname="minutes" fieldTitle="Minutes after hour" initialValue="5" onChangeFunc={onChangeFunc}></SonarConfigField>
-              <SonarConfigField fieldname="pencilbeamcount" fieldTitle="Pencil Beam Images to Average" initialValue="1" onChangeFunc={onChangeFunc}></SonarConfigField>
-              <SonarConfigField fieldname="sampleperiod" fieldTitle="Seconds between Samples" initialValue="600" onChangeFunc={onChangeFunc}></SonarConfigField>
               <SonarConfigField fieldname="beamdatapoints" fieldTitle="Beam Data Points" initialValue="50" onChangeFunc={onChangeFunc}></SonarConfigField>
-            </div>
-            <div className="configurationrow">
-              <SonarConfigField fieldname="serialsendchoice" fieldTitle="Serial Send Choice" initialValue="0" onChangeFunc={onChangeFunc}></SonarConfigField>
-              <SonarConfigField fieldname="azimuthincrement" fieldTitle="Azimuth Increment in degrees" initialValue="2.40000" onChangeFunc={onChangeFunc}></SonarConfigField>
               <SonarConfigField fieldname="downwardsamplingtime" fieldTitle="Minutes for Downward Sampling" initialValue="0" onChangeFunc={onChangeFunc}></SonarConfigField>
             </div>
           </div>
@@ -26,9 +20,9 @@ const SonarConfigBoxNormal = ({onChangeFunc}) => {
           <div className="configurationgroup">
             Downward
             <div className="configurationrow">
-              <SonarConfigField fieldname="downwardpencilbeamrange" fieldTitle="Pencil Beam Range" initialValue="4" onChangeFunc={onChangeFunc}></SonarConfigField>
-              <SonarConfigField fieldname="downwardfrequency" fieldTitle="Frequency" initialValue="165" onChangeFunc={onChangeFunc}></SonarConfigField>
-              <SonarConfigField fieldname="downwardpencilbeamlogf" fieldTitle="Pencil Beam logf Value" initialValue="1" onChangeFunc={onChangeFunc}></SonarConfigField>
+              <SonarConfigField fieldname="downwardpencilbeamrange" fieldTitle="Pencil Beam Range (m)" initialValue="4" onChangeFunc={onChangeFunc}></SonarConfigField>
+              <SonarConfigField fieldname="downwardfrequency" fieldTitle="Frequency (kHz)" initialValue="165" onChangeFunc={onChangeFunc}></SonarConfigField>
+              <SonarConfigField fieldname="downwardpencilbeamlogf" fieldTitle="Pencil Beam logf (dB)" initialValue="1" onChangeFunc={onChangeFunc}></SonarConfigField>
               <SonarConfigField fieldname="downwardpencilbeamstartgain" fieldTitle="Pencil Beam Start Gain" initialValue="30" onChangeFunc={onChangeFunc}></SonarConfigField>
             </div>
             <div className="configurationrow">
@@ -38,16 +32,17 @@ const SonarConfigBoxNormal = ({onChangeFunc}) => {
           </div>
 
           <div className="configurationgroup">
-            3D
+            Scan
             <div className="configurationrow">
-              <SonarConfigField fieldname="THREEDpencilbeamrange" fieldTitle="Pencil Beam Range" initialValue="2" onChangeFunc={onChangeFunc}></SonarConfigField>
-              <SonarConfigField fieldname="THREEDfrequency" fieldTitle="Frequency" initialValue="165" onChangeFunc={onChangeFunc}></SonarConfigField>
+              <SonarConfigField fieldname="THREEDpencilbeamrange" fieldTitle="Pencil Beam Range (m)" initialValue="2" onChangeFunc={onChangeFunc}></SonarConfigField>
+              <SonarConfigField fieldname="THREEDfrequency" fieldTitle="Frequency (kHz)" initialValue="165" onChangeFunc={onChangeFunc}></SonarConfigField>
               <SonarConfigField fieldname="THREEDpencilbeamlogf" fieldTitle="Pencil Beam logf Value" initialValue="1" onChangeFunc={onChangeFunc}></SonarConfigField>
               <SonarConfigField fieldname="THREEDpencilbeamstartgain" fieldTitle="Pencil Beam Start Gain" initialValue="30" onChangeFunc={onChangeFunc}></SonarConfigField>
             </div>
             <div className="configurationrow">
+              <SonarConfigField fieldname="sampleperiod" fieldTitle="Seconds between Samples" initialValue="600" onChangeFunc={onChangeFunc}></SonarConfigField>
               <SonarConfigField fieldname="THREEDpencilbeamabsorption" fieldTitle="Pencil Beam Absorption" initialValue="60" onChangeFunc={onChangeFunc}></SonarConfigField>
-              <SonarConfigField fieldname="THREEDpencilbeampulselength" fieldTitle="Pencil Beam Pulse Length" initialValue="20" onChangeFunc={onChangeFunc}></SonarConfigField>
+              <SonarConfigField fieldname="THREEDpencilbeampulselength" fieldTitle="Pencil Beam Pulse Length (uSec)" initialValue="20" onChangeFunc={onChangeFunc}></SonarConfigField>
               <SonarConfigField fieldname="THREEDmodechoice" fieldTitle="3D Mode Choice" initialValue="1" onChangeFunc={onChangeFunc}></SonarConfigField>
             </div>
           </div>

@@ -4,11 +4,8 @@ const baseBackendUrl = 'http://' + configuration.services.backend.host + ':' + c
 
 const DistributeConfiguration = (configuration) => {
   document.getElementById("minutes").value = configuration.deployment.minutes;
-  document.getElementById("pencilbeamcount").value = configuration.deployment.pencilbeamcount;
   document.getElementById("sampleperiod").value = configuration.deployment.sampleperiod;
   document.getElementById("beamdatapoints").value = configuration.deployment.beamdatapoints;
-  document.getElementById("serialsendchoice").value = configuration.deployment.serialsendchoice;
-  document.getElementById("azimuthincrement").value = configuration.deployment.azimuthincrement;
   document.getElementById("downwardsamplingtime").value = configuration.deployment.downwardsamplingtime;
 
   document.getElementById("downwardpencilbeamrange").value = configuration.downward.pencilbeamrange;
@@ -85,11 +82,8 @@ const WriteConfiguration = (onDoneHandler) => {
 
   var deployment = {};
   deployment.minutes = ValidateIntField("minutes", 0, 59);
-  deployment.pencilbeamcount = ValidateIntField("pencilbeamcount", 1, 10);
   deployment.sampleperiod = ValidateIntField("sampleperiod", 1, 10000);
   deployment.beamdatapoints = ValidateIntField("beamdatapoints", 1, 360);
-  deployment.serialsendchoice = ValidateIntField("serialsendchoice", 0, 1);
-  deployment.azimuthincrement = ValidateFloatField("azimuthincrement", 0.0, 180.0);
   deployment.downwardsamplingtime = ValidateIntField("downwardsamplingtime", 0, 5000);
 
   var downward = {};
