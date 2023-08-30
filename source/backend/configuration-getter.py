@@ -18,8 +18,14 @@ configurationName = sys.argv[1]
 #print("Getting configuration '" + configurationName + "'")
 
 json_configuration = {}
-with open(configurationpath + configurationName + ".json", 'r') as configfile:
-    json_configuration = json.load(configfile)
+fullpathname = configurationpath + configurationName + ".json"
+if os.path.isfile(fullpathname):
+  with open(fullpathname, 'r') as configfile:
+      json_configuration = json.load(configfile)
 
-print(json.dumps(json_configuration))
-exit(0)
+  print(json.dumps(json_configuration))
+  exit(0)
+
+result = {'result': 'Configuration ' + configurationName + ' does not exist'}
+print(json.dumps(result))
+exit(503)
