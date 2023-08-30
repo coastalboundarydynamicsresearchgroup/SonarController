@@ -43,7 +43,7 @@ var postSonarScan = function(req, res) {
   //setTimeout(package, 100, expansionId, modelName, progressPerPolicy, req.body);
   
   var response = {
-    response: `Started writing expansion to model ${modelName}, sequence ${templateSequence}`,
+    response: `Started sonar scan with configuration ${configuration}`,
     link: `${req.protocol}://${req.get('Host')}/expansion/progress/${expansionId}`
   };
   res.json(response);
