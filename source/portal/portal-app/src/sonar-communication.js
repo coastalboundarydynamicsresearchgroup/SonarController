@@ -21,6 +21,8 @@ const DistributeSwitchResponse = (response, test) => {
   document.getElementById("resp_headrange").value = response.response.range;
   document.getElementById("resp_profilerange").value = response.response.profilerange;
   document.getElementById("resp_bytecount").value = response.response.databytes;
+
+  console.log(response.response.comment);
 }
 
 var isValidInput = true;
@@ -103,8 +105,10 @@ const SendSwitchCommand = (test, onDoneHandler) => {
   switchParameters.gain = ValidateIntField("gain", 0, 40);
   switchParameters.logf = ValidateIntField("logf", 10, 40, 10);
   switchParameters.absorption = ValidateFloatField("absorption", 0.0, 2.55, 0.01);
+  switchParameters.sector_width = ValidateIntField("sector_width", 0, 360, 3);
   switchParameters.train_angle = ValidateIntField("train_angle", -180.0, 180, 3);
   switchParameters.step_size = ValidateFloatField("step_size", 0.0, 2.4, 0.3);
+  switchParameters.calibrate = ValidateIntField("calibrate", 0, 1);
   switchParameters.pulse_length = ValidateIntField("pulse_length", 10, 1000, 10);
   switchParameters.data_points = ValidateIntField("data_points", 250, 500, 250);
   switchParameters.profile = ValidateIntField("profile", 0, 1);

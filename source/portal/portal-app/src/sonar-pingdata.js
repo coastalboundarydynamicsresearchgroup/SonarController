@@ -16,9 +16,15 @@ const SonarPingData = ({pingdata}) => {
     }
 
     var keyval = 0;
+    var brightness = 1;
+    const brightness_field = document.getElementById("resp_brightness");
+    if (brightness_field) {
+      brightness = brightness_field.value;
+    }
 
     const makeColor = (val) => {
-      return `rgb(${val},${val},${val})`;
+      const grey = val * brightness;
+      return `rgb(${grey},${grey},${grey})`;
     }
 
     return (

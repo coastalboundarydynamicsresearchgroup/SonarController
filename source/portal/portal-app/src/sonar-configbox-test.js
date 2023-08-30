@@ -18,8 +18,10 @@ const SonarConfigBoxTest = ({pingdata, onChangeFunc}) => {
               <SonarConfigField fieldname="absorption" fieldTitle="Absorption (0.00-2.55db) inc=0.01" initialValue="0.60" onChangeFunc={onChangeFunc}></SonarConfigField>
             </div>
             <div className="configurationrow">
+              <SonarConfigField fieldname="sector_width" fieldTitle="Sector Width (0-360deg) inc=3" initialValue="0" onChangeFunc={onChangeFunc}></SonarConfigField>
               <SonarConfigField fieldname="train_angle" fieldTitle="Train Angle (-180-180deg) inc=3" initialValue="0" onChangeFunc={onChangeFunc}></SonarConfigField>
               <SonarConfigField fieldname="step_size" fieldTitle="Step Size (0-2.4deg) inc 0.3" initialValue="1.2" onChangeFunc={onChangeFunc}></SonarConfigField>
+              <SonarConfigField fieldname="calibrate" fieldTitle="Calibrate (0, 1)" initialValue="0" onChangeFunc={onChangeFunc}></SonarConfigField>
             </div>
             <div className="configurationrow">
               <SonarConfigField fieldname="pulse_length" fieldTitle="Pulse Length (10-1000us) inc=10" initialValue="200" onChangeFunc={onChangeFunc}></SonarConfigField>
@@ -45,6 +47,7 @@ const SonarConfigBoxTest = ({pingdata, onChangeFunc}) => {
               <SonarConfigField fieldname="resp_headrange" fieldTitle="Head Range" initialValue="1" onChangeFunc={onChangeFunc}></SonarConfigField>
               <SonarConfigField fieldname="resp_profilerange" fieldTitle="Profile Range" initialValue="4" onChangeFunc={onChangeFunc}></SonarConfigField>
               <SonarConfigField fieldname="resp_bytecount" fieldTitle="Byte Count" initialValue="4" onChangeFunc={onChangeFunc}></SonarConfigField>
+              <SonarConfigField fieldname="resp_brightness" fieldTitle="Brightness" initialValue="4" onChangeFunc={onChangeFunc}></SonarConfigField>
             </div>
           </div>
           <SonarPingData pingdata={pingdata} />

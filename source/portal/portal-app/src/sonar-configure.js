@@ -61,7 +61,6 @@ const SonarConfigure = ({getState, setState, onTestClicked, onPingData, test}) =
     const onDeploy = () => {
       if (test) {
         SendSwitchCommand(test, (pingdata) => {
-          console.log(`Passing ping data ${pingdata}`);
           onPingData(pingdata);
         });
       } else {
