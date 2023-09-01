@@ -15,6 +15,93 @@ const onSonarDone = (results) => {
 
 }
 
+const waitStep = (delay, startTime, onDone) => {
+  let now = new Date();
+  if (now >= startTime) {
+    inprogress[commonKey].status = `Completed pre-deploy delay at ${now}`;
+    inprogress[commonKey].completed = true;
+    onDone();
+    return;
+  }
+
+  inprogress[commonKey].status = `Waiting until ${startTime} at ${now}`;
+  setTimeout(() => waitStep(delay, startTime, onDone), delay);
+}
+
+const scanStep = (sonarDeploy, period, count, onDone) => {
+  inprogress[commonKey].status = `Scan(${sonarDeploy.configurationName}) ${count} for ${period} seconds`;
+  sonarDeploy.doSonarScan((message) => {
+    inprogress[commonKey].status = `Error during scan(${sonarDeploy.configurationName}): ${message}`;
+  },
+  (response) => {
+    inprogress[commonKey].status = `Scan(${sonarDeploy.configurationName}) ${count} completed with ${response.count} steps`;
+  });
+
+  if (count > 0) {
+    setTimeout(() => scanStep(sonarDeploy, period, count-1, onDone), period);
+  }
+  else {
+    onDone();
+  }
+}
+
+const downwardStep = (sonarDeploy, period, count, onDone) => {
+  inprogress[commonKey].status = `Downward(${sonarDeploy.configurationName}) ${count} for ${period} seconds`;
+  sonarDeploy.doSonarStep((message) => {
+    inprogress[commonKey].status = `Error during downward(${sonarDeploy.configurationName}): ${message}`;
+  },
+  (response) => {
+    inprogress[commonKey].status = `Downward(${sonarDeploy.configurationName}) ${count} completed with ${response.count} steps`;
+  });
+
+  if (count > 0) {
+    setTimeout(() => downwardStep(sonarDeploy, period, count-1, onDone), period);
+  }
+  else {
+    onDone();
+  }
+}
+
+const composeStep = (downwardSamplingTime, downwardSamplePeriod, scanSamplingTime, scanSamplePeriod, sonarDeploy, onDone) => {
+  let downwardCount = 0;
+  if (downwardSamplingTime > 0 && downwardSamplePeriod > 0) {
+    downwardCount = Math.ceil(downwardSamplingTime / downwardSamplePeriod);
+  }
+
+  let scanCount = 0;
+  if (scanSamplingTime > 0 && scanSamplePeriod > 0) {
+    scanCount = Math.ceil(scanSamplingTime / scanSamplePeriod);
+  }
+
+  if (scanCount > 0) {
+    inprogress[commonKey].status = `"Starting scan"(${sonarDeploy.configurationName}) with ${scanCount} steps of ${scanSamplePeriod} seconds`;
+    scanStep(sonarDeploy, scanSamplePeriod, scanCount, () => {
+      if (downwardCount > 0) {
+        inprogress[commonKey].status = `"Starting downward"(${sonarDeploy.configurationName}) with ${downwardCount} steps of ${downwardSamplePeriod} seconds`;
+        downwardStep(sonarDeploy, downwardSamplePeriod, downwardCount, () => {
+          setTimeout(() => composeStep(downwardSamplingTime, downwardSamplePeriod, scanSamplingTime, scanSamplePeriod, sonarDeploy, onDone), 500);
+        });
+      }
+    });
+  }
+}
+
+const doSonarDeploy = (configuration, sonarDeploy, onDone) => {
+  let nowDate = new Date();
+  let nowMs = nowDate.getTime();
+  let delayMs = configuration.deployment.minutes * 60 * 1000;
+  let startTime = new Date(nowMs + delayMs);
+
+  const downwardSamplingTime = configuration.deployment.downnwardsamplingtime;
+  const downwardSamplePeriod = configuration.downward.sampleperiod;
+  const scanSamplingTime = configuration.deployment.scansamplingtime;
+  const scanSamplePeriod = configuration.scan.sampleperiod;
+
+  waitStep(1000, startTime, () => {
+    composeStep(downwardSamplingTime, downwardSamplePeriod, scanSamplingTime, scanSamplePeriod, sonarDeploy, onDone);
+  });
+}
+
 //
 // Handle the web API route used to trigger deployment with a sonar881 configuration.
 // Pass the request to a python backend script, accepting the response
@@ -40,45 +127,14 @@ var putSonarDeploy = async function(req, res) {
 
   let sonarDeploy = new SonarDeploy(configurationName, configuration);
 
-  let nowDate = new Date();
-  let nowMs = nowDate.getTime();
-  let delayMs = configuration.deployment.minutes * 60 * 1000;
-  let startTime = new Date(nowMs + delayMs);
-
-  let now = new Date();
-  while (now < startTime) {
-    await new Promise(r => setTimeout(r, 5000));
-    inprogress[commonKey].status = `Waiting until ${startTime} at ${now}`;
-    now = new Date();
-}
-
-  /*
-  exec(`python configuration-putter.py ${configurationName} ${configuration}`, (error, stdout, stderr) => {
-    if (error) {
-      console.log(`error: ${error.message}`);
-      inprogress[commonKey].status = `Sonar scan error for configuration '${configuration}'` + error.message;
-      if (stdout) {
-        console.log(`stdout: ${stdout}`);
-      }
-      errorResponse = JSON.parse(stdout);
-      res.status(errorResponse.status).send(errorResponse.message)
-    } else {
-        inprogress[commonKey].status = stdout;
-        console.log(`Configuration ${configurationName} saved:\n${stdout}`);
-      res.set('Access-Control-Allow-Origin', '*');
-      var response = {
-        response: `Configuration ${configurationName} saved`,
-        status: 201
-      };
-      res.json(response);
-    }
-    inprogress[commonKey].completed = true;
-  });
-  */
+  setTimeout(() => doSonarDeploy(configuration, sonarDeploy, () => {
+    inprogress[commonKey].status = `Deploy of sonar scan done`;
+  }), 500);
 
   var response = {
-    response: `Started sonar deploy with configuration ${configuration}`,
-    link: `${req.protocol}://${req.get('Host')}/deploy/progress`
+    response: `Started sonar deploy with configuration ${configurationName}`,
+    link: `${req.protocol}://${req.get('Host')}/sonar/deploy/progress`,
+    status: 201
   };
   res.json(response);
 }

@@ -86,10 +86,10 @@ const SonarConfigure = ({getState, setState, onTestClicked, onPingData, test}) =
     .then(response => {
       if (response.status === 201) {
         messages.value += 'Sent deploy command with status ' + response.status + '\n';
-        messages.value += response.response.response + '\n';
+        messages.value += response.response + '\n';
       }
       else {
-        messages.value += 'Error sending switch command with status ' + response.status + '\n';
+        messages.value += 'Error sending deploy command with status ' + response.status + '\n';
       }
     });
   }

@@ -12,6 +12,7 @@ const DistributeConfiguration = (configuration) => {
   document.getElementById("downwardfrequency").value = configuration.downward.frequency;
   document.getElementById("downwardlogf").value = configuration.downward.logf;
   document.getElementById("downwardstartgain").value = configuration.downward.startgain;
+  document.getElementById("downwardtrainangle").value = configuration.downward.trainangle;
   document.getElementById("downwardsampleperiod").value = configuration.downward.sampleperiod;
   document.getElementById("downwardabsorption").value = configuration.downward.absorption;
   document.getElementById("downwardpulselength").value = configuration.downward.pulselength;
@@ -20,6 +21,8 @@ const DistributeConfiguration = (configuration) => {
   document.getElementById("scanfrequency").value = configuration.scan.frequency;
   document.getElementById("scanlogf").value = configuration.scan.logf;
   document.getElementById("scanstartgain").value = configuration.scan.startgain;
+  document.getElementById("scansectorwidth").value = configuration.scan.sectorwidth;
+  document.getElementById("scantrainangle").value = configuration.scan.trainangle;
   document.getElementById("scansampleperiod").value = configuration.scan.sampleperiod;
   document.getElementById("scanabsorption").value = configuration.scan.absorption;
   document.getElementById("scanpulselength").value = configuration.scan.pulselength;
@@ -106,6 +109,7 @@ const WriteConfiguration = (onDoneHandler) => {
   downward.frequency = ValidateIntField("downwardfrequency", 0, 255);
   downward.logf = ValidateIntField("downwardlogf", 0, 255);
   downward.startgain = ValidateIntField("downwardstartgain", 0, 255);
+  downward.trainangle = ValidateIntField("downwardtrainangle", -180.0, 180, 3);
   downward.sampleperiod = ValidateIntField("downwardsampleperiod", 1, 600);
   downward.absorption = ValidateIntField("downwardabsorption", 0, 255);
   downward.pulselength = ValidateIntField("downwardpulselength", 0, 255);
@@ -115,6 +119,8 @@ const WriteConfiguration = (onDoneHandler) => {
   scan.frequency = ValidateIntField("scanfrequency", 0, 255);
   scan.logf = ValidateIntField("scanlogf", 0, 255);
   scan.startgain = ValidateIntField("scanstartgain", 0, 255);
+  scan.sectorwidth = ValidateIntField("scansectorwidth", 0, 360, 3);
+  scan.trainangle = ValidateIntField("scantrainangle", -180.0, 180, 3);
   scan.sampleperiod = ValidateIntField("scansampleperiod", 1, 600);
   scan.absorption = ValidateIntField("scanabsorption", 0, 255);
   scan.pulselength = ValidateIntField("scanpulselength", 0, 255);
