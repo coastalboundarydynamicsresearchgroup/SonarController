@@ -4,28 +4,29 @@ const baseBackendUrl = 'http://' + configuration.services.backend.host + ':' + c
 
 const DistributeConfiguration = (configuration) => {
   document.getElementById("minutes").value = configuration.deployment.minutes;
-  document.getElementById("sampleperiod").value = configuration.deployment.sampleperiod;
-  document.getElementById("beamdatapoints").value = configuration.deployment.beamdatapoints;
+  document.getElementById("pingdatapoints").value = configuration.deployment.pingdatapoints;
   document.getElementById("downwardsamplingtime").value = configuration.deployment.downwardsamplingtime;
+  document.getElementById("scansamplingtime").value = configuration.deployment.scansamplingtime;
 
-  document.getElementById("downwardpencilbeamrange").value = configuration.downward.pencilbeamrange;
+  document.getElementById("downwardrange").value = configuration.downward.range;
   document.getElementById("downwardfrequency").value = configuration.downward.frequency;
-  document.getElementById("downwardpencilbeamlogf").value = configuration.downward.pencilbeamlogf;
-  document.getElementById("downwardpencilbeamstartgain").value = configuration.downward.pencilbeamstartgain;
-  document.getElementById("downwardpencilbeamabsorption").value = configuration.downward.pencilbeamabsorption;
-  document.getElementById("downwardpencilbeampulselength").value = configuration.downward.pencilbeampulselength;
+  document.getElementById("downwardlogf").value = configuration.downward.logf;
+  document.getElementById("downwardstartgain").value = configuration.downward.startgain;
+  document.getElementById("downwardsampleperiod").value = configuration.downward.sampleperiod;
+  document.getElementById("downwardabsorption").value = configuration.downward.absorption;
+  document.getElementById("downwardpulselength").value = configuration.downward.pulselength;
 
-  document.getElementById("THREEDpencilbeamrange").value = configuration.THREED.pencilbeamrange;
-  document.getElementById("THREEDfrequency").value = configuration.THREED.frequency;
-  document.getElementById("THREEDpencilbeamlogf").value = configuration.THREED.pencilbeamlogf;
-  document.getElementById("THREEDpencilbeamstartgain").value = configuration.THREED.pencilbeamstartgain;
-  document.getElementById("THREEDpencilbeamabsorption").value = configuration.THREED.pencilbeamabsorption;
-  document.getElementById("THREEDpencilbeampulselength").value = configuration.THREED.pencilbeampulselength;
-  document.getElementById("THREEDmodechoice").value = configuration.THREED.modechoice;
+  document.getElementById("scanrange").value = configuration.scan.range;
+  document.getElementById("scanfrequency").value = configuration.scan.frequency;
+  document.getElementById("scanlogf").value = configuration.scan.logf;
+  document.getElementById("scanstartgain").value = configuration.scan.startgain;
+  document.getElementById("scansampleperiod").value = configuration.scan.sampleperiod;
+  document.getElementById("scanabsorption").value = configuration.scan.absorption;
+  document.getElementById("scanpulselength").value = configuration.scan.pulselength;
 }
 
 var isValidInput = true;
-const ValidateIntField = (fieldName, minValue, maxValue) => {
+const ValidateIntField = (fieldName, minValue, maxValue, increment=1) => {
   const messages = document.getElementById('messages');
 
   const fieldValue = document.getElementById(fieldName).value;
@@ -48,10 +49,16 @@ const ValidateIntField = (fieldName, minValue, maxValue) => {
     return maxValue;
   }
 
+  if (parsedInt % increment !== 0) {
+    messages.value += `Invalid value ${parsedInt} in field ${fieldName}, must be a multiple of ${increment}\n`;
+    isValidInput = false;
+    return minValue;
+  }
+
   return parsedInt;
 }
 
-const ValidateFloatField = (fieldName, minValue, maxValue) => {
+const ValidateFloatField = (fieldName, minValue, maxValue, increment) => {
   const messages = document.getElementById('messages');
 
   const fieldValue = document.getElementById(fieldName).value;
@@ -74,36 +81,45 @@ const ValidateFloatField = (fieldName, minValue, maxValue) => {
     return maxValue;
   }
 
+  const remainder = parsedFloat % increment;
+  if (remainder > increment) {
+    messages.value += `Invalid value ${parsedFloat} in field ${fieldName}, has remainder of ${remainder}, must be a multiple of ${increment}\n`;
+    isValidInput = false;
+    return minValue;
+  }
+
   return parsedFloat;
 }
+
 
 const WriteConfiguration = (onDoneHandler) => {
   isValidInput = true;
 
   var deployment = {};
   deployment.minutes = ValidateIntField("minutes", 0, 59);
-  deployment.sampleperiod = ValidateIntField("sampleperiod", 1, 10000);
-  deployment.beamdatapoints = ValidateIntField("beamdatapoints", 1, 360);
+  deployment.pingdatapoints = ValidateIntField("pingdatapoints", 250, 500, 250);
   deployment.downwardsamplingtime = ValidateIntField("downwardsamplingtime", 0, 5000);
+  deployment.scansamplingtime = ValidateIntField("scansamplingtime", 0, 5000);
 
   var downward = {};
-  downward.pencilbeamrange = ValidateIntField("downwardpencilbeamrange", 1, 6);
+  downward.range = ValidateIntField("downwardrange", 1, 6);
   downward.frequency = ValidateIntField("downwardfrequency", 0, 255);
-  downward.pencilbeamlogf = ValidateIntField("downwardpencilbeamlogf", 0, 255);
-  downward.pencilbeamstartgain = ValidateIntField("downwardpencilbeamstartgain", 0, 255);
-  downward.pencilbeamabsorption = ValidateIntField("downwardpencilbeamabsorption", 0, 255);
-  downward.pencilbeampulselength = ValidateIntField("downwardpencilbeampulselength", 0, 255);
+  downward.logf = ValidateIntField("downwardlogf", 0, 255);
+  downward.startgain = ValidateIntField("downwardstartgain", 0, 255);
+  downward.sampleperiod = ValidateIntField("downwardsampleperiod", 1, 600);
+  downward.absorption = ValidateIntField("downwardabsorption", 0, 255);
+  downward.pulselength = ValidateIntField("downwardpulselength", 0, 255);
 
-  var THREED = {};
-  THREED.pencilbeamrange = ValidateIntField("THREEDpencilbeamrange", 1, 6);
-  THREED.frequency = ValidateIntField("THREEDfrequency", 0, 255);
-  THREED.pencilbeamlogf = ValidateIntField("THREEDpencilbeamlogf", 0, 255);
-  THREED.pencilbeamstartgain = ValidateIntField("THREEDpencilbeamstartgain", 0, 255);
-  THREED.pencilbeamabsorption = ValidateIntField("THREEDpencilbeamabsorption", 0, 255);
-  THREED.pencilbeampulselength = ValidateIntField("THREEDpencilbeampulselength", 0, 255);
-  THREED.modechoice = ValidateIntField("THREEDmodechoice", 0, 5);
+  var scan = {};
+  scan.range = ValidateIntField("scanrange", 1, 6);
+  scan.frequency = ValidateIntField("scanfrequency", 0, 255);
+  scan.logf = ValidateIntField("scanlogf", 0, 255);
+  scan.startgain = ValidateIntField("scanstartgain", 0, 255);
+  scan.sampleperiod = ValidateIntField("scansampleperiod", 1, 600);
+  scan.absorption = ValidateIntField("scanabsorption", 0, 255);
+  scan.pulselength = ValidateIntField("scanpulselength", 0, 255);
 
-  const configuration = {"deployment": deployment, "downward": downward, "THREED": THREED};
+  const configuration = {"deployment": deployment, "downward": downward, "scan": scan};
 
   if (isValidInput) {
     PutConfiguration(configuration, onDoneHandler);

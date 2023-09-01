@@ -10,6 +10,7 @@ const putconfiguration = require('./routehandlers/putconfiguration');
 const getconfiguration = require('./routehandlers/getconfiguration');
 const deleteconfiguration = require('./routehandlers/deleteconfiguration');
 const postSonarSwitch = require('./routehandlers/postsonarswitch');
+const putSonarDeploy = require('./routehandlers/putsonardeploy');
 
 
 let rawdata = fs.readFileSync('/configuration/configuration.json');
@@ -35,6 +36,9 @@ router.delete('/configuration/:configurationName', [deleteconfiguration]);
 
 // Put the content of the specified configuration under the specified name.
 router.post('/sonar/switch', [postSonarSwitch]);
+
+// Put the command to deploy with the specified configuration.
+router.put('/sonar/deploy/:configurationName', [putSonarDeploy]);
 
 
 var server = http.createServer(app);
