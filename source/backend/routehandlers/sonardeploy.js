@@ -22,7 +22,7 @@ class SonarDeploy {
     }
 
     doSonarStep(onError, onDone) {
-      const parameters = buildSonarDownwardStepParameters();
+      const parameters = this.buildSonarDownwardStepParameters();
       var sonarParameters_raw = JSON.stringify(parameters);
       const sonarParameters = sonarParameters_raw.replaceAll('"', '\\\"')
     
@@ -46,7 +46,7 @@ class SonarDeploy {
     }
 
     doSonarScan(onError, onDone) {
-      const parameters = buildSonarScanStepParameters();
+      const parameters = this.buildSonarScanStepParameters();
       var sonarParameters_raw = JSON.stringify(parameters);
       const sonarParameters = sonarParameters_raw.replaceAll('"', '\\\"')
     

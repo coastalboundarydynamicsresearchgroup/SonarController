@@ -29,40 +29,64 @@ const waitStep = (delay, startTime, onDone) => {
 }
 
 const scanStep = (sonarDeploy, period, count, onDone) => {
+  if (count === 0) {
+    inprogress[commonKey].status = `Scan(${sonarDeploy.configurationName}) being skipped`;
+    onDone();
+    return;
+  }
+
   inprogress[commonKey].status = `Scan(${sonarDeploy.configurationName}) ${count} for ${period} seconds`;
   sonarDeploy.doSonarScan((message) => {
     inprogress[commonKey].status = `Error during scan(${sonarDeploy.configurationName}): ${message}`;
-  },
+    if (count > 0) {
+      setTimeout(() => scanStep(sonarDeploy, period, count-1, onDone), period * 1000);
+    }
+    else {
+      onDone();
+    }
+    },
   (response) => {
     inprogress[commonKey].status = `Scan(${sonarDeploy.configurationName}) ${count} completed with ${response.count} steps`;
-  });
-
-  if (count > 0) {
-    setTimeout(() => scanStep(sonarDeploy, period, count-1, onDone), period);
-  }
-  else {
-    onDone();
-  }
+    if (count > 0) {
+      setTimeout(() => scanStep(sonarDeploy, period, count-1, onDone), period * 1000);
+    }
+    else {
+      onDone();
+    }
+    });
 }
 
 const downwardStep = (sonarDeploy, period, count, onDone) => {
+  if (count === 0) {
+    inprogress[commonKey].status = `Downward(${sonarDeploy.configurationName}) being skipped`;
+    onDone();
+    return;
+  }
+  
   inprogress[commonKey].status = `Downward(${sonarDeploy.configurationName}) ${count} for ${period} seconds`;
   sonarDeploy.doSonarStep((message) => {
     inprogress[commonKey].status = `Error during downward(${sonarDeploy.configurationName}): ${message}`;
+    if (count > 0) {
+      setTimeout(() => downwardStep(sonarDeploy, period, count-1, onDone), period * 1000);
+    }
+    else {
+      onDone();
+    }
   },
   (response) => {
     inprogress[commonKey].status = `Downward(${sonarDeploy.configurationName}) ${count} completed with ${response.count} steps`;
+    if (count > 0) {
+      setTimeout(() => downwardStep(sonarDeploy, period, count-1, onDone), period * 1000);
+    }
+    else {
+      onDone();
+    }
   });
 
-  if (count > 0) {
-    setTimeout(() => downwardStep(sonarDeploy, period, count-1, onDone), period);
-  }
-  else {
-    onDone();
-  }
 }
 
 const composeStep = (downwardSamplingTime, downwardSamplePeriod, scanSamplingTime, scanSamplePeriod, sonarDeploy, onDone) => {
+  console.log(`Composing downward sample time ${downwardSamplingTime} period ${downwardSamplePeriod}, scan sample time ${scanSamplingTime} period ${scanSamplePeriod}`);
   let downwardCount = 0;
   if (downwardSamplingTime > 0 && downwardSamplePeriod > 0) {
     downwardCount = Math.ceil(downwardSamplingTime / downwardSamplePeriod);
@@ -72,18 +96,19 @@ const composeStep = (downwardSamplingTime, downwardSamplePeriod, scanSamplingTim
   if (scanSamplingTime > 0 && scanSamplePeriod > 0) {
     scanCount = Math.ceil(scanSamplingTime / scanSamplePeriod);
   }
+  console.log(`Composing downward count ${downwardCount} sample period ${downwardSamplePeriod}  scan count ${scanCount} sample period ${scanSamplePeriod}`);
 
   if (scanCount > 0) {
     inprogress[commonKey].status = `"Starting scan"(${sonarDeploy.configurationName}) with ${scanCount} steps of ${scanSamplePeriod} seconds`;
-    scanStep(sonarDeploy, scanSamplePeriod, scanCount, () => {
-      if (downwardCount > 0) {
-        inprogress[commonKey].status = `"Starting downward"(${sonarDeploy.configurationName}) with ${downwardCount} steps of ${downwardSamplePeriod} seconds`;
-        downwardStep(sonarDeploy, downwardSamplePeriod, downwardCount, () => {
-          setTimeout(() => composeStep(downwardSamplingTime, downwardSamplePeriod, scanSamplingTime, scanSamplePeriod, sonarDeploy, onDone), 500);
-        });
-      }
-    });
   }
+  scanStep(sonarDeploy, scanSamplePeriod, scanCount, () => {
+    if (downwardCount > 0) {
+      inprogress[commonKey].status = `"Starting downward"(${sonarDeploy.configurationName}) with ${downwardCount} steps of ${downwardSamplePeriod} seconds`;
+    }
+    downwardStep(sonarDeploy, downwardSamplePeriod, downwardCount, () => {
+        setTimeout(() => composeStep(downwardSamplingTime, downwardSamplePeriod, scanSamplingTime, scanSamplePeriod, sonarDeploy, onDone), 500);
+    });
+  });
 }
 
 const doSonarDeploy = (configuration, sonarDeploy, onDone) => {
@@ -92,9 +117,10 @@ const doSonarDeploy = (configuration, sonarDeploy, onDone) => {
   let delayMs = configuration.deployment.minutes * 60 * 1000;
   let startTime = new Date(nowMs + delayMs);
 
-  const downwardSamplingTime = configuration.deployment.downnwardsamplingtime;
+  // All times in seconds.
+  const downwardSamplingTime = configuration.deployment.downwardsamplingtime * 60;
   const downwardSamplePeriod = configuration.downward.sampleperiod;
-  const scanSamplingTime = configuration.deployment.scansamplingtime;
+  const scanSamplingTime = configuration.deployment.scansamplingtime * 60;
   const scanSamplePeriod = configuration.scan.sampleperiod;
 
   waitStep(1000, startTime, () => {

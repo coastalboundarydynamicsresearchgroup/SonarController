@@ -17,7 +17,7 @@ const SonarConfigBoxNormal = ({onChangeFunc}) => {
           <div className="configurationgroup">
             Deployment
             <div className="configurationrow">
-              <SonarConfigField fieldname="minutes" fieldTitle="Minutes after hour" initialValue="5" onChangeFunc={onChangeFunc}></SonarConfigField>
+              <SonarConfigField fieldname="minutes" fieldTitle="Delay to start (minutes)" initialValue="5" onChangeFunc={onChangeFunc}></SonarConfigField>
               <SonarConfigField fieldname="pingdatapoints" fieldTitle="Data Points (250, 500)" initialValue="500" onChangeFunc={onChangeFunc}></SonarConfigField>
               <SonarConfigField fieldname="downwardsamplingtime" fieldTitle="Minutes for Downward Sampling" initialValue="0" onChangeFunc={onChangeFunc}></SonarConfigField>
               <SonarConfigField fieldname="scansamplingtime" fieldTitle="Minutes for Scan Sampling" initialValue="0" onChangeFunc={onChangeFunc}></SonarConfigField>
