@@ -26,7 +26,7 @@ class SonarDeploy {
       var sonarParameters_raw = JSON.stringify(parameters);
       const sonarParameters = sonarParameters_raw.replaceAll('"', '\\\"')
     
-      exec(`python sonar-switch.py ${sonarParameters} ${this.sonarFilePath + 'sonar.dat'}`, (error, stdout, stderr) => {
+      exec(`python sonarswitch.py ${sonarParameters} ${this.sonarFilePath + 'sonar.dat'}`, (error, stdout, stderr) => {
         if (error) {
           console.log(`error: ${error.message}`);
           if (stdout) {
@@ -52,7 +52,7 @@ class SonarDeploy {
     
       const step_count = int(parameters.sector_width / parameters.step_size) + 1;
 
-      exec(`python sonar-switch.py ${sonarParameters} ${this.sonarFilePath + 'sonar.dat'} ${step_count}`, (error, stdout, stderr) => {
+      exec(`python sonarswitch.py ${sonarParameters} ${this.sonarFilePath + 'sonar.dat'} ${step_count}`, (error, stdout, stderr) => {
         if (error) {
           console.log(`error: ${error.message}`);
           if (stdout) {
@@ -109,13 +109,13 @@ class SonarDeploy {
 
     buildSonarScanStepParameters() {
       // As configured.
-      const range = this.configuration.downward.range;
-      const logf = this.configuration.downward.logf;
-      const absorption = this.configuration.downward.absorption;
-      const pulse_length = his.configuration.downward.pulselength;
-      const sector_width = this.configuration.downward.sectorwidth;
-      const train_angle = this.configuration.downward.trainangle;
-      const frequency = his.configuration.downward.frequency;
+      const range = this.configuration.scan.range;
+      const logf = this.configuration.scan.logf;
+      const absorption = this.configuration.scan.absorption;
+      const pulse_length = his.configuration.scan.pulselength;
+      const sector_width = this.configuration.scan.sectorwidth;
+      const train_angle = this.configuration.scan.trainangle;
+      const frequency = this.configuration.scan.frequency;
       const data_points = this.configuration.deployment.pingdatapoints;
 
       // Always constant.

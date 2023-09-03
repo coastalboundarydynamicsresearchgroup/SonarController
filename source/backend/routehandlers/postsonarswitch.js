@@ -14,7 +14,7 @@ var postSonarSwitch = function(req, res) {
   const sonarParameters = sonarParameters_raw.replaceAll('"', '\\\"')
   console.log(`POST sonar switch ${sonarParameters}`);
 
-  exec(`python sonar-switch.py ${sonarParameters}`, (error, stdout, stderr) => {
+  exec(`python sonarswitch.py ${sonarParameters}`, (error, stdout, stderr) => {
     if (error) {
       console.log(`error: ${error.message}`);
       if (stdout) {

@@ -111,7 +111,7 @@ const WriteConfiguration = (onDoneHandler) => {
   downward.startgain = ValidateIntField("downwardstartgain", 0, 40);
   downward.trainangle = ValidateIntField("downwardtrainangle", -180.0, 180, 3);
   downward.sampleperiod = ValidateIntField("downwardsampleperiod", 1, 600);
-  downward.absorption = ValidateIntField("downwardabsorption", 0.0, 2.55, 0.01);
+  downward.absorption = ValidateFloatField("downwardabsorption", 0.0, 2.55, 0.01);
   downward.pulselength = ValidateIntField("downwardpulselength", 10, 1000, 10);
 
   var scan = {};
@@ -122,7 +122,7 @@ const WriteConfiguration = (onDoneHandler) => {
   scan.sectorwidth = ValidateIntField("scansectorwidth", 0, 360, 3);
   scan.trainangle = ValidateIntField("scantrainangle", -180.0, 180, 3);
   scan.sampleperiod = ValidateIntField("scansampleperiod", 1, 600);
-  scan.absorption = ValidateIntField("scanabsorption", 0.0, 2.55, 0.01);
+  scan.absorption = ValidateFloatField("scanabsorption", 0.0, 2.55, 0.01);
   scan.pulselength = ValidateIntField("scanpulselength", 10, 1000, 10);
 
   const configuration = {"deployment": deployment, "downward": downward, "scan": scan};
