@@ -5,19 +5,20 @@ import json
 dataPathRoot = '/sonar/data/'
 
 class SonarDeploy:
-    def __init__(self, sonar, configurationName, configuration):
+    def __init__(self, sonar, configurationName, configuration, onStatus):
         self.sonar = sonar
         self.configurationName = configurationName
         self.configuration = configuration
+        self.onStatus = onStatus
 
         if not os.path.exists(dataPathRoot):
             os.makedirs(dataPathRoot)
 
     def makeNewDataFolder(self):
         utcDateTime = time.gmtime()
-        data_folder = "{year}-{month}-{day}_{hour}:{minute}:{second}".format(year=utcDateTime.tm_year, month=utcDateTime.tm_mon, day=utcDateTime.tm_mday, hour=utcDateTime.tm_hour, minute=utcDateTime.tm_min, second=utcDateTime.tm_sec)
+        data_folder = "{year:04d}-{month:02d}-{day:02d}_{hour:02d}:{minute:02d}:{second:02d}".format(year=utcDateTime.tm_year, month=utcDateTime.tm_mon, day=utcDateTime.tm_mday, hour=utcDateTime.tm_hour, minute=utcDateTime.tm_min, second=utcDateTime.tm_sec)
         self.sonarFilePath = dataPathRoot + data_folder + '/'
-        print('Making new sonar data path ' + self.sonarFilePath)
+        self.onStatus('Making new sonar data path ' + self.sonarFilePath)
         if not os.path.exists(self.sonarFilePath):
             os.makedirs(self.sonarFilePath)
 
@@ -30,11 +31,7 @@ class SonarDeploy:
 
     def doSonarStep(self):
         sonarParameters = self.buildSonarDownwardStepParameters()
-        self.sonar.execute(sonarParameters, self.sonarFilePath + 'sonar.dat')
-
-        # TODO - get error response from execute, return to caller.
-        response = {}
-        response['count'] = 0
+        response = self.sonar.execute(sonarParameters, self.sonarFilePath + 'sonar.dat', self.onStatus)
 
         result = {}
         result['success'] = True
@@ -45,11 +42,7 @@ class SonarDeploy:
     def doSonarScan(self):
         sonarParameters = self.buildSonarScanStepParameters()
         step_count = int(sonarParameters['sector_width'] / sonarParameters['step_size']) + 1
-        self.sonar.execute(sonarParameters, self.sonarFilePath + 'sonar.dat', step_count)
-
-        # TODO - get error response from execute, return to caller.
-        response = {}
-        response['count'] = 0
+        response = self.sonar.execute(sonarParameters, self.sonarFilePath + 'sonar.dat', self.onStatus, step_count)
 
         result = {}
         result['success'] = True

@@ -10,13 +10,11 @@ class SonarCommChannel:
       plus formatting the command from parameters.
   """
   def __init__(self):
-    print('SonarCommChannel constructor')
     pass
 
   def __enter__(self):
-    print('SonarCommChannel __enter__')
     self.ser = serial.Serial('/dev/ttyUSB0', baudrate=115200, bytesize=8, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
-    self.ser.timeout = 2
+    self.ser.timeout = 10 # Exprimentally determined, some commands require the head to slew.
     self.ser.reset_output_buffer()
     self.ser.reset_input_buffer()
     time.sleep(1)
@@ -25,9 +23,9 @@ class SonarCommChannel:
   def __exit__(self, *args):
     self.ser.close()
 
-  def execute(self, parameters, filepath, loop_count=1):
-    print('Entering SonarCommChannel.execute with filepath=' + filepath + ", and loop_count=" + str(loop_count))
-    print(parameters)
+  def execute(self, parameters, filepath, onStatus, loop_count=1):
+    onStatus('Executing with filepath=' + filepath + ", and loop_count=" + str(loop_count))
+    #print(parameters) # TODO - test only, remove
     sonar_range = parameters['range']
     gain = parameters['gain']
     logf = int(parameters['logf']/10) - 1
@@ -55,77 +53,94 @@ class SonarCommChannel:
                                           calibrate=calibrate,
                                           frequency=frequency)
     
-    print('Created switch command')
-    print(command)
+    onStatus('Created switch command: range=' + str(sonar_range) + ', sector width=' + str(sector_width) + ', train angle=' + str(train_angle) + ', step size=' + str(step_size))
+    #print(command) # TODO - test only, remove
 
     for _ in range(loop_count):
-      sonar_data = self.send_switch(command)
-      # print(sonar_data)
-      response = {}
-      if sonar_data:
-        # If we got data and a file path was specified, write the raw binary data.
-        if filepath:
-          if os.path.exists(filepath):
-            append_write = 'a'
-          else:
-            append_write = 'w'
-          with open(filepath, append_write + 'b') as file:
-            file.write(sonar_data)
-
-        if len(sonar_data) > 12:
-            # Convert raw binary response to engineering units, pack in response object.
-            response["header"] = sonar_data[0:3].decode('utf-8')
-            response["headid"] = sonar_data[3]
-            response["serialstatus"] = sonar_data[4]
-            response["stepdirection"] = 1 if sonar_data[6] & 64 else 0
-            response["headpos"] = (((sonar_data[6] & 63) << 7 | (sonar_data[5] & 127)) - 600) * 0.3
-            response["comment"] = "Computing head position " + str(response["headpos"]) + " from byte 5=" + str(sonar_data[5]) + " and 6=" + str(sonar_data[6])
-            response["range"] = sonar_data[7]
-            response["profilerange"] = sonar_data[9] << 7 | sonar_data[8] & 127
-            response["databytes"] = sonar_data[11] << 7 | sonar_data[10] & 127
-            data = ""
-            for val in sonar_data[12:-1]:
-                data += "{0:02x}".format(val)
-            response["data"] = data
-            print('response')
-            print(response)
+      try:
+        sonar_data = self.send_switch(command, onStatus)
+        # print(sonar_data)
+        response = {}
+        if sonar_data:
+          response = self.handle_sonar_response(sonar_data, filepath, onStatus)
         else:
-           print('Bad response')
-           print(response)
-      else:
-        # No response, don't write to file, pack dummy data in response object.
-        response["header"] = "DUM"
-        response["headid"] = 16
-        response["serialstatus"] = 65
-        response["stepdirection"] = 1
-        response["headpos"] = 4.3
-        response["range"] = 42
-        response["profilerange"] = 192
-        response["databytes"] = 500
-        response["comment"]="No response from sonar"
-        data = ""
-        for i in range(250):
-            data += "{0:02x}".format(i)
-        for i in range(250):
-            data += "{0:02x}".format(250 - i)
-        response["data"] = data
-        print('No response')
+          response = self.make_dummy_response()
+      except Exception:
+        onStatus('Failure in serial transaction')
 
-    # Single-step requests want the response back
-    if loop_count == 1:
-      return response
+    response = {}
+    response['count'] = loop_count
+    return response
 
 
-  def send_switch(self, command):
+  def send_switch(self, command, onStatus):
+    self.ser.reset_input_buffer()
     sent_count = self.ser.write(command)
     self.ser.flush()
     if sent_count != len(command):
-      print('Sent ' + str(sent_count) + ' bytes, but should have sent ' + len(command))
+      onStatus('Sent ' + str(sent_count) + ' bytes, but should have sent ' + len(command))
 
     read_data = self.ser.read_until(b'\xfc')
     #print('Read ' + str(read_data) + ' from sonar')
 
     return read_data
+
+  def handle_sonar_response(self, sonar_data, filepath, onStatus):
+    response = {}
+    # If we got data and a file path was specified, write the raw binary data.
+    if filepath:
+      if os.path.exists(filepath):
+        append_write = 'a'
+      else:
+        append_write = 'w'
+      with open(filepath, append_write + 'b') as file:
+        onStatus('Writing ' + str(len(sonar_data)) + ' received bytes to file ' + filepath)
+        file.write(sonar_data)
+
+    if len(sonar_data) > 12:
+        # Convert raw binary response to engineering units, pack in response object.
+        response["header"] = sonar_data[0:3].decode('utf-8')
+        response["headid"] = sonar_data[3]
+        response["serialstatus"] = sonar_data[4]
+        response["stepdirection"] = 1 if sonar_data[6] & 64 else 0
+        response["headpos"] = (((sonar_data[6] & 63) << 7 | (sonar_data[5] & 127)) - 600) * 0.3
+        response["comment"] = "Computing head position " + str(response["headpos"]) + " from byte 5=" + str(sonar_data[5]) + " and 6=" + str(sonar_data[6])
+        response["range"] = sonar_data[7]
+        response["profilerange"] = sonar_data[9] << 7 | sonar_data[8] & 127
+        response["databytes"] = sonar_data[11] << 7 | sonar_data[10] & 127
+        data = ""
+        for val in sonar_data[12:-1]:
+            data += "{0:02x}".format(val)
+        response["data"] = data
+        onStatus('Response has step direction=' + str(response['stepdirection']) + ', head position=' + str(response['headpos']) + ', data byte count=' + str(response['databytes']))
+        #print(response) # TODO - test only, remove
+    else:
+      onStatus('Bad response with total length=' + str(len(sonar_data)))
+      #print(response) # TODO - test only, remove
+
+    return response
+
+  def make_dummy_response(self):
+      response = {}
+      # No response, don't write to file, pack dummy data in response object.
+      response["header"] = "DUM"
+      response["headid"] = 16
+      response["serialstatus"] = 65
+      response["stepdirection"] = 1
+      response["headpos"] = 4.3
+      response["range"] = 42
+      response["profilerange"] = 192
+      response["databytes"] = 500
+      response["comment"]="No response from sonar"
+      data = ""
+      for i in range(250):
+          data += "{0:02x}".format(i)
+      for i in range(250):
+          data += "{0:02x}".format(250 - i)
+      response["data"] = data
+      print('No response')
+
+      return response
 
 
   def create_switch_command(self, sonar_range, gain, logf, absorption, sector_width, train_angle, step_size, pulse_length, data_points, profile, calibrate, frequency):
