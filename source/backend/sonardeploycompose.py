@@ -88,10 +88,10 @@ class SonarDeployCompose:
 
     for iteration in range(count): 
       emit_status('')
-      emit_status('Downward(' + self.configurationName + ') ' + str(iteration) + ' of '  + str(count) + ' for ' + str(period) + ' seconds')
+      emit_status('Downward(' + self.configurationName + ') ' + str(iteration + 1) + ' of '  + str(count) + ' for ' + str(period) + ' seconds')
       result = deployer.doSonarStep()
       if result['success']:
-        emit_status('Downward(' + self.configurationName + ') ' + str(iteration) + ' of ' + str(count) + ' completed with ' + str(result['response']['count']) + ' steps')
+        emit_status('Downward(' + self.configurationName + ') ' + str(iteration + 1) + ' of ' + str(count) + ' completed with ' + str(result['response']['count']) + ' steps')
       else:
         emit_status('Error during downward(' + str(self.configurationName) + ': ' + result['message'])
 
@@ -107,10 +107,10 @@ class SonarDeployCompose:
 
     for iteration in range(count): 
       emit_status('')
-      emit_status('Scan(' + self.configurationName + ') '  + str(iteration) + ' of ' + str(count) + ' for ' + str(period) + ' seconds')
+      emit_status('Scan(' + self.configurationName + ') '  + str(iteration + 1) + ' of ' + str(count) + ' for ' + str(period) + ' seconds')
       result = deployer.doSonarScan()
       if result['success']:
-        emit_status('Scan(' + self.configurationName + ') ' + str(iteration) + ' of ' + str(count) + ' completed with ' + str(result['response']['count']) + ' steps')
+        emit_status('Scan(' + self.configurationName + ') ' + str(iteration + 1) + ' of ' + str(count) + ' completed with ' + str(result['response']['count']) + ' steps')
       else:
         emit_status('Error during scan(' + str(self.configurationName) + ': ' + result['message'])
 
