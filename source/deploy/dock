@@ -1,0 +1,13 @@
+#!/bin/bash
+echo $(pwd)
+docker container run \
+-it \
+--rm \
+--name=sonar-deploy \
+--device /dev/ttyUSB0 \
+-v "$(pwd)":/usr/src/app \
+-v "$(pwd)/../configuration/:/configuration" \
+-v "/mnt/m2/sonar/:/sonar" \
+-v "/dev/ttyUSB0/:/dev/ttyUSB0" \
+louisross/sonar-deploy:1.1 \
+bash
