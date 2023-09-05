@@ -41,7 +41,7 @@ class SonarDeploy:
 
     def doSonarScan(self):
         sonarParameters = self.buildSonarScanStepParameters()
-        step_count = int(sonarParameters['sector_width'] / sonarParameters['step_size']) + 1
+        step_count = int(sonarParameters['sector_width'] / sonarParameters['step_size'] * 2) + 1
         response = self.sonar.execute(sonarParameters, self.sonarFilePath + 'sonar.dat', self.onStatus, step_count)
 
         result = {}
