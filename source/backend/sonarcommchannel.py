@@ -53,7 +53,7 @@ class SonarCommChannel:
                                           calibrate=calibrate,
                                           frequency=frequency)
     
-    onStatus('Created switch command: range=' + str(sonar_range) + ', sector width=' + str(sector_width) + ', train angle=' + str(train_angle) + ', step size=' + str(step_size))
+    onStatus('Created switch command: range=' + str(parameters['range']) + ', sector width=' + str(parameters['sector_width']) + ', train angle=' + str(parameters['train_angle']) + ', step size=' + str(parameters['step_size']))
     #print(command) # TODO - test only, remove
 
     for _ in range(loop_count):
