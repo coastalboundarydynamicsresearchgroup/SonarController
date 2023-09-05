@@ -96,9 +96,9 @@ class SonarDeploy:
         pulse_length = int(self.configuration['scan']['pulselength'])
         data_points = int(self.configuration['deployment']['pingdatapoints'])
         frequency = int(self.configuration['scan']['frequency'])
+        step_size = float(self.configuration['scan']['step_size'])
 
         # Always constant.
-        step_size = 1.2
         profile = 0
         calibrate = 0
 

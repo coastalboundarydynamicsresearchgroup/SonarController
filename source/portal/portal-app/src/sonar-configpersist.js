@@ -23,6 +23,7 @@ const DistributeConfiguration = (configuration) => {
   document.getElementById("scanstartgain").value = configuration.scan.startgain;
   document.getElementById("scansectorwidth").value = configuration.scan.sectorwidth;
   document.getElementById("scantrainangle").value = configuration.scan.trainangle;
+  document.getElementById("step_size").value = configuration.scan.step_size;
   document.getElementById("scansampleperiod").value = configuration.scan.sampleperiod;
   document.getElementById("scanabsorption").value = configuration.scan.absorption;
   document.getElementById("scanpulselength").value = configuration.scan.pulselength;
@@ -121,6 +122,7 @@ const WriteConfiguration = (onDoneHandler) => {
   scan.startgain = ValidateIntField("scanstartgain", 0, 40);
   scan.sectorwidth = ValidateIntField("scansectorwidth", 0, 360, 3);
   scan.trainangle = ValidateIntField("scantrainangle", -180.0, 180, 3);
+  scan.step_size = ValidateFloatField("step_size", 0.0, 2.4, 0.3);
   scan.sampleperiod = ValidateIntField("scansampleperiod", 1, 600);
   scan.absorption = ValidateFloatField("scanabsorption", 0.0, 2.55, 0.01);
   scan.pulselength = ValidateIntField("scanpulselength", 10, 1000, 10);

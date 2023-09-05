@@ -56,6 +56,7 @@ const SonarConfigBoxNormal = ({onChangeFunc}) => {
             <div className="configurationrow">
               <SonarConfigField fieldname="scansectorwidth" fieldTitle="Sector Width (0-360deg) inc=3" initialValue="0" onChangeFunc={onChangeFunc}></SonarConfigField>
               <SonarConfigField fieldname="scantrainangle" fieldTitle="Train Angle (-180-180deg) inc=3" initialValue="0" onChangeFunc={onChangeFunc}></SonarConfigField>
+              <SonarConfigField fieldname="step_size" fieldTitle="Step Size (0-2.4deg) inc 0.3" initialValue="0" onChangeFunc={onChangeFunc}></SonarConfigField>
             </div>
             <div className="configurationrow">
               <SonarConfigField fieldname="scansampleperiod" fieldTitle="Seconds between Samples" initialValue="600" onChangeFunc={onChangeFunc}></SonarConfigField>
