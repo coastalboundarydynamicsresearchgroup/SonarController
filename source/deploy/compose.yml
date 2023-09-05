@@ -1,0 +1,12 @@
+services:
+  sonar-deploy:
+    container_name: sonar-deploy
+    build: ./
+    image: "louisross/sonar-deploy:1.1"
+    devices:
+      - "/dev/ttyUSB0:/dev/ttyUSB0"
+    tty: false
+    volumes:
+      - "./:/usr/src/app"
+      - "../configuration/:/configuration"
+      - "/mnt/m2/sonar/:/sonar"
