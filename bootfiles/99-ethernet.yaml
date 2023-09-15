@@ -1,0 +1,9 @@
+# This is the network config written by Louis Ross for Sonar Controller
+network:
+  ethernets:
+    enp2s0:
+      dhcp4: true
+    enp1s0:
+      dhcp4: true
+  version: 2
+  renderer: NetworkManager
