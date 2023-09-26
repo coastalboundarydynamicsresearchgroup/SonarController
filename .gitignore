@@ -130,7 +130,7 @@ dist
 .pnp.*
 
 # Temporary local files.
-source/configuration/configuration.json
+source/portal/portal-app/src/configuration/
 source/explore/sonar.dat
 source/explore/__pycache__
 source/backend/explore/__pycache__/
