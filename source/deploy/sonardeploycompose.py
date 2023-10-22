@@ -11,6 +11,7 @@ configurationpath = '/sonar/configuration/'
 logPathRoot = '/sonar/log/'
 logFilePath = logPathRoot + 'default/'
 logFile = logFilePath + 'default.log'
+runFile = '__runfile__.json'
 debug_mode = True
 
 result = { 'success': False, 'message': 'Unknown error' }
@@ -50,24 +51,53 @@ def makeNewLogFolder():
 
 
 class SonarDeployCompose:
-  def __init__(self, configurationName, debug=False):
+  def __init__(self, debug=False):
     global debug_mode
 
-    self.configurationName = configurationName
+    self.configurationName = ''
     self.configuration = {}
+    self.running = False
+    self.runChange = False
     
     debug_mode = debug
 
     makeNewLogFolder()
 
-    fullpathname = configurationpath + configurationName + ".json"
-    if not os.path.isfile(fullpathname):
-      emit_status('Configuration file ' + fullpathname + ' does not exist')
-      exit(503)
 
-    with open(fullpathname, 'r') as configfile:
-      self.configuration = json.load(configfile)
+  def get_runstate(self):
+    global configurationpath
+    global runFile
+    runFilePath = configurationpath + runFile
 
+    configurationName = ''
+    configuration = {}
+    running = False
+
+    try:
+      if os.path.exists(runFilePath):
+        with open(runFilePath, 'r') as runfile:
+          runData = json.load(runfile)
+          if 'configurationName' in runData:
+            configName = runData['configurationName']
+            fullpathname = configurationpath + configName + ".json"
+            if os.path.isfile(fullpathname):
+              with open(fullpathname, 'r') as configfile:
+                configurationName = configName
+                configuration = json.load(configfile)
+                running = True
+    except Exception:
+      pass
+
+    runChange = False
+    if self.configurationName != configurationName or self.running != running:
+      runChange = True
+    self.configurationName = configurationName
+    self.configuration = configuration
+    self.running = running
+    self.runChange = runChange
+
+    return self.running
+    
 
   def delay_start(self):
     delay_minutes = float(self.configuration['deployment']['minutes'])
@@ -97,6 +127,11 @@ class SonarDeployCompose:
       else:
         emit_status('Error during downward(' + str(self.configurationName) + ': ' + result['message'])
 
+      self.get_runstate()
+      if self.runChange:
+        print('Downward loop terminated because run state changed')
+        break
+
       end_timestamp = time.time()
       duration = end_timestamp - start_timestamp
       if duration < period:
@@ -121,6 +156,11 @@ class SonarDeployCompose:
       else:
         emit_status('Error during scan(' + str(self.configurationName) + ': ' + result['message'])
 
+      self.get_runstate()
+      if self.runChange:
+        print('Scan loop terminated because run state changed')
+        break
+
       end_timestamp = time.time()
       duration = end_timestamp - start_timestamp
       if duration < period:
@@ -129,31 +169,40 @@ class SonarDeployCompose:
 
 
   def compose_and_deploy(self):
-    sonar = SonarCommChannel()
+    sonar = SonarCommChannel(self)
     with sonar:
-      deployer = SonarDeploy(sonar, self.configurationName, self.configuration, emit_status)
-
-      # All times in seconds.
-      downwardSamplingTime = self.configuration['deployment']['downwardsamplingtime'] * 60
-      downwardSamplePeriod = self.configuration['downward']['sampleperiod']
-      scanSamplingTime = self.configuration['deployment']['scansamplingtime'] * 60
-      scanSamplePeriod = self.configuration['scan']['sampleperiod']
-
-      emit_status('Composing downward sample time ' + str(downwardSamplingTime) + ' period ' + str(downwardSamplePeriod) + ', scan sample time ' + str(scanSamplingTime) + ' period ' + str(scanSamplePeriod))
-      downwardCount = 0
-      if downwardSamplingTime > 0 and downwardSamplePeriod > 0:
-        downwardCount = math.ceil(downwardSamplingTime / downwardSamplePeriod)
-
-      scanCount = 0
-      if scanSamplingTime > 0 and scanSamplePeriod > 0:
-        scanCount = math.ceil(scanSamplingTime / scanSamplePeriod)
-
-      emit_status('Composing downward count ' + str(downwardCount) + ' sample period ' + str(downwardSamplePeriod) + '  scan count ' + str(scanCount) + ' sample period ' + str(scanSamplePeriod))
-
-      self.delay_start()
-
       while True:
-        self.downwardStep(deployer, downwardSamplePeriod, downwardCount)
-        self.scanStep(deployer, scanSamplePeriod, scanCount)
+        self.get_runstate()
+        while not self.running:
+          time.sleep(1)
+          self.get_runstate()
+        self.runChange = False
+
+        deployer = SonarDeploy(sonar, self.configurationName, self.configuration, emit_status)
+
+        # All times in seconds.
+        downwardSamplingTime = self.configuration['deployment']['downwardsamplingtime'] * 60
+        downwardSamplePeriod = self.configuration['downward']['sampleperiod']
+        scanSamplingTime = self.configuration['deployment']['scansamplingtime'] * 60
+        scanSamplePeriod = self.configuration['scan']['sampleperiod']
+
+        emit_status('Composing downward sample time ' + str(downwardSamplingTime) + ' period ' + str(downwardSamplePeriod) + ', scan sample time ' + str(scanSamplingTime) + ' period ' + str(scanSamplePeriod))
+        downwardCount = 0
+        if downwardSamplingTime > 0 and downwardSamplePeriod > 0:
+          downwardCount = math.ceil(downwardSamplingTime / downwardSamplePeriod)
+
+        scanCount = 0
+        if scanSamplingTime > 0 and scanSamplePeriod > 0:
+          scanCount = math.ceil(scanSamplingTime / scanSamplePeriod)
+
+        emit_status('Composing downward count ' + str(downwardCount) + ' sample period ' + str(downwardSamplePeriod) + '  scan count ' + str(scanCount) + ' sample period ' + str(scanSamplePeriod))
+
+        self.delay_start()
+
+        self.get_runstate()
+        while self.running:
+          self.downwardStep(deployer, downwardSamplePeriod, downwardCount)
+          self.scanStep(deployer, scanSamplePeriod, scanCount)
+          self.get_runstate()
 
 

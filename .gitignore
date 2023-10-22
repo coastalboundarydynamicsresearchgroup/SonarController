@@ -135,3 +135,5 @@ source/explore/sonar.dat
 source/explore/__pycache__
 source/backend/explore/__pycache__/
 source/deploy/__pycache__/
+source/configuration/configuration.json
+source/deploy/__runfile__.json

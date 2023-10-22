@@ -10,17 +10,11 @@ configurationpath = '/sonar/configuration/'
     Backend implementation for sonar881 controller.
     Start the deployment engine.
 """
-if len(sys.argv) < 2:
-  print('Usage: ' + sys.argv[0] +  ' <configuration name>')
-  exit(1)
-
-configurationName = sys.argv[1]
-
 debug = False
-if len(sys.argv) > 2:
+if len(sys.argv) > 1:
   debug = True
 
-deployer = SonarDeployCompose(configurationName, debug)
+deployer = SonarDeployCompose(debug)
 deployer.compose_and_deploy()
 
 result = { 'result': 201, 'message': 'deployment complete' }

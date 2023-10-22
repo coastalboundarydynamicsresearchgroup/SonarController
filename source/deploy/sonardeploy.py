@@ -10,6 +10,8 @@ class SonarDeploy:
         self.configurationName = configurationName
         self.configuration = configuration
         self.onStatus = onStatus
+        self.scanSequence = 1
+        self.downwardSequence = 1
 
         if not os.path.exists(dataPathRoot):
             os.makedirs(dataPathRoot)
@@ -31,7 +33,8 @@ class SonarDeploy:
 
     def doSonarStep(self):
         sonarParameters = self.buildSonarDownwardStepParameters()
-        response = self.sonar.execute(sonarParameters, self.sonarFilePath + 'sonar.dat', self.onStatus)
+        response = self.sonar.execute(sonarParameters, self.sonarFilePath + 'sonarStep' + str(self.downwardSequence) + '.dat', self.onStatus)
+        self.downwardSequence += 1
 
         result = {}
         result['success'] = True
@@ -42,7 +45,8 @@ class SonarDeploy:
     def doSonarScan(self):
         sonarParameters = self.buildSonarScanStepParameters()
         step_count = int(sonarParameters['sector_width'] / sonarParameters['step_size'] * 2) + 1
-        response = self.sonar.execute(sonarParameters, self.sonarFilePath + 'sonar.dat', self.onStatus, step_count)
+        response = self.sonar.execute(sonarParameters, self.sonarFilePath + 'sonarScan' + str(self.scanSequence) + '.dat', self.onStatus, step_count)
+        self.scanSequence += 1
 
         result = {}
         result['success'] = True
