@@ -137,3 +137,5 @@ source/backend/explore/__pycache__/
 source/deploy/__pycache__/
 source/configuration/configuration.json
 source/deploy/__runfile__.json
+source/simulator/__pycache__/*
+source/simulator/sonar.dat
