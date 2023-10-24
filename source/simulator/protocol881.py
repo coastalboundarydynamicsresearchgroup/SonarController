@@ -6,6 +6,14 @@ class Direction(Enum):
 
 
 class Protocol881:
+  """ This class represents the application layer of the simulator.  It accepts raw packets
+      from the sonar client, which should be valid switch commands, and generates the respones.
+      It also manages a simulation of the internal state of the sonar, including the head angle
+      and step direction, and attempts to provide behavior consistent with that requested in
+      the switch command.
+      TODO - Future versions will return some reasonable data, but for now, the correct number
+             of all zeros is returned.
+  """
   def __init__(self):
     self.head_angle = 0.0
     self.direction = Direction.CLOCKWISE
@@ -68,6 +76,9 @@ class Protocol881:
       self.execute_switch_command()
 
   def execute_switch_command(self):
+    """ Add behavior to the sonar consistent with the switch command.
+        Primarily, this means step the head angle using the specified parameters.
+    """
     if self.parse_result['hold']:
       return
 
@@ -86,6 +97,9 @@ class Protocol881:
 
 
   def switch_response(self):
+    """ Generate a switch response appropriate to the previously-received command.
+    """
+
     data_length = 0
     if not self.parse_result['profile']:
       data_length = int((self.parse_result['datapoints'] * self.parse_result['databits']) / 8)
@@ -129,5 +143,5 @@ class Protocol881:
 
     response[13 + data_length - 1] = 0xfc
 
-    print('Response: ' + str(response[0:2]) + ' head pos ' + str(head_position) + ' direction ' + str(self.direction))
+    print('Response: ' + str(response[0:3]) + ' head pos ' + str(head_position) + ' direction ' + str(self.direction))
     return response

@@ -1,6 +1,10 @@
 
 
 class Simulate:
+  """ Wrap the high-level behavior of the simulator,
+      given a transport and protocol object.
+  """
+  
   def __init__(self, protocol, sonarcommchannel):
     self.protocol = protocol
     self.sonarcommchannel = sonarcommchannel
