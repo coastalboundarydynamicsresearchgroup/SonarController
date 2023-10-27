@@ -9,8 +9,8 @@ class SonarCommChannel:
   """ First, define a class to encapsulate the serial port transaction
       plus formatting the command from parameters.
   """
-  def __init__(self, composer):
-    self.deployComposer = composer
+  def __init__(self, runstate):
+    self.runstate = runstate
 
   def __enter__(self):
     self.ser = serial.Serial('/dev/ttyUSB0', baudrate=115200, bytesize=8, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
@@ -66,12 +66,10 @@ class SonarCommChannel:
           response = self.handle_sonar_response(sonar_data, filepath, onStatus)
         else:
           response = self.make_dummy_response()
-          running = self.deployComposer.get_runstate()
-          print('Sonar comm timeout allowed run state check, running = ', str(running))
       except Exception:
         onStatus('Failure in serial transaction')
 
-      if not running:
+      if not self.runstate.is_running():
         print('Sonar comm loop terminated because we are not running')
         break
 
