@@ -1,9 +1,6 @@
-import sys
 import os
-import json
 import time
 import math
-import threading
 from sonarcommchannel import SonarCommChannel
 from sonardeploy import SonarDeploy
 
@@ -15,6 +12,7 @@ runFile = '__runfile__.json'
 debug_mode = True
 
 result = { 'success': False, 'message': 'Unknown error' }
+
 
 def emit_status(message):
   """ TODO - figure out a way to pass status to the web service,
@@ -55,50 +53,10 @@ class SonarDeployCompose:
     global debug_mode
 
     self.runstate = runstate
-    #self.configurationName = ''
-    #self.configuration = {}
-    #self.running = False
-    #self.runChange = False
-    
     debug_mode = debug
 
     makeNewLogFolder()
 
-  """
-  def get_runstate(self):
-    global configurationpath
-    global runFile
-    runFilePath = configurationpath + runFile
-
-    configurationName = ''
-    configuration = {}
-    running = False
-
-    try:
-      if os.path.exists(runFilePath):
-        with open(runFilePath, 'r') as runfile:
-          runData = json.load(runfile)
-          if 'configurationName' in runData:
-            configName = runData['configurationName']
-            fullpathname = configurationpath + configName + ".json"
-            if os.path.isfile(fullpathname):
-              with open(fullpathname, 'r') as configfile:
-                configurationName = configName
-                configuration = json.load(configfile)
-                running = True
-    except Exception:
-      pass
-
-    runChange = False
-    if self.configurationName != configurationName or self.running != running:
-      runChange = True
-    self.configurationName = configurationName
-    self.configuration = configuration
-    self.running = running
-    self.runChange = runChange
-
-    return self.running
-  """
 
   def delay_start(self):
     delay_minutes = float(self.runstate.configuration['deployment']['minutes'])
@@ -108,6 +66,7 @@ class SonarDeployCompose:
     for _ in range(delay_seconds):
       time.sleep(1)
     emit_status('Done waiting ' + str(delay_seconds) + ' seconds')
+
 
   def downwardStep(self, deployer, period, count):
     if count == 0:
@@ -134,6 +93,7 @@ class SonarDeployCompose:
       duration = end_timestamp - start_timestamp
       if duration < period:
         time.sleep(period - duration)
+
 
   def scanStep(self, deployer, period, count):
     if count == 0:
