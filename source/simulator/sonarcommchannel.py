@@ -10,16 +10,23 @@ class SonarCommChannel:
 
   def __enter__(self):
     self.ser = serial.Serial('Com4', baudrate=115200, bytesize=8, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
-    #self.ser.timeout = 2
-
+    # We wake up once in a while so the program can be interrupted.
+    self.ser.timeout = 0.5
+  
   def __exit__(self, *args):
     self.ser.close()
 
   def receive_switch(self):
     """ Wait forever for a switch command, and return it as a byte array.
     """
-    read_data = self.ser.read_until(b'\xfd')
-    #print('Read ' + str(read_data) + ' from sonar controller')
+    got_line = False
+    read_data = bytearray(0)
+    while not got_line:
+      partial_data = self.ser.read_until(b'\xfd')
+      read_data.extend(partial_data)
+      if len(read_data) > 0 and read_data[-1] == 0xfd:
+        #print('Read ' + str(read_data) + ' from sonar controller')
+        got_line = True
 
     return read_data
 
