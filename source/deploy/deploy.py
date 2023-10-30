@@ -1,5 +1,4 @@
 import sys
-import os
 import time
 import json
 
@@ -9,19 +8,11 @@ from sonardeploycompose import SonarDeployCompose
 
 configurationpath = '/sonar/configuration/'
 
-def TestTiming():
-  test_count = 1000000
-  start_timestamp = time.time()
-  for _ in range(test_count):
-    deployer.get_runstate()
-  end_timestamp = time.time()
-
-  duration = end_timestamp - start_timestamp
-  print(str(test_count) + ' iterations took ' + str(duration))
-  ### End test timing
-
 
 def ExecuteDeploy(runstate):
+  """ Callback sent to the file watcher that allows
+      the deployment to run whant a runfile is present.
+  """
   deployer = SonarDeployCompose(runstate, debug)
   sonar = SonarCommChannel(runstate)
   with sonar:
@@ -36,13 +27,6 @@ debug = False
 if len(sys.argv) > 1:
   debug = True
 
-### Test timing
-#TestTiming()
-### End test timing
-
-#deployer = SonarDeployCompose(debug)
-
-#deployer.compose_and_deploy()
 watcher = Watcher(ExecuteDeploy)
 watcher.run()
 
