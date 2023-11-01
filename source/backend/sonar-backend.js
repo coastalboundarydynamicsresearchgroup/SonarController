@@ -10,8 +10,9 @@ const putconfiguration = require('./routehandlers/putconfiguration');
 const getconfiguration = require('./routehandlers/getconfiguration');
 const deleteconfiguration = require('./routehandlers/deleteconfiguration');
 const postSonarSwitch = require('./routehandlers/postsonarswitch');
-const putSonarDeploy = require('./routehandlers/putsonardeploy');
+const {putSonarDeploy, putSonarUndeploy} = require('./routehandlers/putsonardeploy');
 const getDeployProgress = require('./routehandlers/getdeployprogress');
+const putSonarProgress = require('./routehandlers/putsonarprogress');
 
 
 let rawdata = fs.readFileSync('/configuration/configuration.json');
@@ -41,8 +42,14 @@ router.post('/sonar/switch', [postSonarSwitch]);
 // Put the command to deploy with the specified configuration.
 router.put('/sonar/deploy/:configurationName', [putSonarDeploy]);
 
+// Put the command to undeploy any previously deployed configuration.
+router.put('/sonar/undeploy', [putSonarUndeploy]);
+
 // Get the deploy progress.
 router.get('/sonar/deploy/progress', [getDeployProgress]);
+
+// Put progress from the deployment or other backend process.
+router.put('/sonar/progress/:id', [putSonarProgress]);
 
 
 var server = http.createServer(app);

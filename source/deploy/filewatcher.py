@@ -50,14 +50,14 @@ class DeployHandler(FileSystemEventHandler):
         self.handleDeleted(event.src_path)
 
     def handleNewOrModified(self, path):
-        if path[-16:] == "__runfile__.json":
+        if path[-18:] == "__runfile__.deploy":
             print('Handling new runfile, reevaluating')
             self.reevaluate(path)
-        elif path[-16:] == "__immediate__.json":
+        elif path[-21:] == "__immediate__.execute":
             self.executeImmediate(path)
 
     def handleDeleted(self, path):
-        if path[-16:] == "__runfile__.json":
+        if path[-18:] == "__runfile__.deploy":
             self.runstate.Reset()
 
     def reevaluate(self, runFilePath):

@@ -17,6 +17,8 @@ const PollProgress = () => {
       if (progressfield && response.status) {
         progressfield.value = response.status;
       }
+      SonarProgressPollerSingleton.instance.progress = response;
+      console.log(SonarProgressPollerSingleton.instance.progress);
     });
 
     setTimeout(PollProgress, 1000);

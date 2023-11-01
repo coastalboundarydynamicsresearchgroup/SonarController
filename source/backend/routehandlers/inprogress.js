@@ -6,6 +6,7 @@ class inProgress {
     static getInstance() {
       if (!inProgress.instance) {
         inProgress.instance = new Map();
+        inProgress.instance[inProgress.getCommonKey()] = {};
       }
       return inProgress.instance;
     }

@@ -9,7 +9,7 @@ const SonarProgressField = ({fieldname, fieldTitle, initialValue}) => {
     return (
       <div className="progressfield">
         {fieldTitle}
-        <input id={fieldname} type="text" defaultValue={initialValue} disabled={true}></input>
+        <input id={fieldname} type="text" defaultValue={initialValue} disabled={false}></input>
       </div>
     )
 }

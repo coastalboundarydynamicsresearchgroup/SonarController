@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import './App.css';
 import { DistributeConfiguration, WriteConfiguration, DeleteConfiguration } from './sonar-configpersist';
 import SendSwitchCommand from './sonar-communication';
+import SonarProgressPollerSingleton from './sonar-progresspoller';
 import configuration from './configuration/configuration.json';
 import SonarConfigButtons from './sonar-configbuttons'
 const baseBackendUrl = 'http://' + configuration.services.backend.host + ':' + configuration.services.backend.port;
@@ -11,6 +12,7 @@ const SonarConfigure = ({getState, setState, onTestClicked, onPingData, test}) =
   const [configurations, setConfigurations] = useState([]);
   const [configurationChanged, setConfigurationChanged] = useState(0);
   const [selectedConfiguration, setSelectedConfiguration] = useState(0);
+  const [deployButtonLabel, setDeployButtonLabel] = useState("Deploy");
 
   useEffect(() => {
     const messages = document.getElementById('messages');
@@ -80,13 +82,25 @@ const SonarConfigure = ({getState, setState, onTestClicked, onPingData, test}) =
       }
     };
     
+    var deployFlag = true;
+    var progressSingleton = SonarProgressPollerSingleton.getInstance();
+    if (progressSingleton.progress) {
+      deployFlag = !progressSingleton.progress.deploying && !progressSingleton.progress.deployrunning;
+    }
+  
     const configurationName = document.getElementById("newconfiguration").value;
-    fetch(baseBackendUrl + '/sonar/deploy/' + configurationName, init)
+    const commandUrl = deployFlag ? '/sonar/deploy/' + configurationName : '/sonar/undeploy'
+    fetch(baseBackendUrl + commandUrl, init)
     .then(data => data.json())
     .then(response => {
       if (response.status === 201) {
         messages.value += 'Sent deploy command with status ' + response.status + '\n';
         messages.value += response.response + '\n';
+        if (response.progress) {
+          console.log(`Got deploy/undeploy response with deploying ${response.progress.deploying} and deployrunning ${response.progress.deployrunning}`);
+          deployFlag = !response.progress.deploying && !response.progress.deployrunning;
+          setDeployButtonLabel(deployFlag ? "Deploy" : "Undeploy");
+        }
       }
       else {
         messages.value += 'Error sending deploy command with status ' + response.status + '\n';
@@ -118,7 +132,7 @@ const SonarConfigure = ({getState, setState, onTestClicked, onPingData, test}) =
           </select>
           Configurations
         </div>
-      <SonarConfigButtons getStateFunc={getState} onCreateFunc={onCreate} onSaveFunc={onSave} onDeleteFunc={onDelete} onDeployFunc={onDeploy} onTestClicked={onTestClicked} test={test} />
+      <SonarConfigButtons getStateFunc={getState} deployButtonLabel={deployButtonLabel} onCreateFunc={onCreate} onSaveFunc={onSave} onDeleteFunc={onDelete} onDeployFunc={onDeploy} onTestClicked={onTestClicked} test={test} />
     </div>
   )
 }
