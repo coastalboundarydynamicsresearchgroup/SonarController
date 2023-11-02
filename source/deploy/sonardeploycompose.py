@@ -1,6 +1,8 @@
 import os
 import time
 import math
+import json
+import requests
 from sonarcommchannel import SonarCommChannel
 from sonardeploy import SonarDeploy
 
@@ -8,18 +10,23 @@ configurationpath = '/sonar/configuration/'
 logPathRoot = '/sonar/log/'
 logFilePath = logPathRoot + 'default/'
 logFile = logFilePath + 'default.log'
-runFile = '__runfile__.json'
 debug_mode = True
 
 result = { 'success': False, 'message': 'Unknown error' }
 
+configuration = {}
+with open('/configuration/configuration.json') as f:
+  configuration = json.load(f)
+baseBackendUrl = 'http://' + configuration['services']['backend']['host'] + ':' + configuration['services']['backend']['port']
+
 
 def emit_status(message):
-  """ TODO - figure out a way to pass status to the web service,
-             probably through an API call.
-  """
   global logFile
   global debug_mode
+
+  status = message.replace('"', '\\\"')
+  payload = {'status': status}
+  requests.put(baseBackendUrl + '/sonar/progress/deploy', json=payload)
 
   utcDateTime = time.gmtime()
   timestamp = "{year:04d}-{month:02d}-{day:02d} {hour:02d}:{minute:02d}:{second:02d}".format(year=utcDateTime.tm_year, month=utcDateTime.tm_mon, day=utcDateTime.tm_mday, hour=utcDateTime.tm_hour, minute=utcDateTime.tm_min, second=utcDateTime.tm_sec)

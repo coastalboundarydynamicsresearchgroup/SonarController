@@ -17,6 +17,7 @@ var putSonarProgress = function(req, res) {
   if (!progress) {
     progress = {"status":"bad update"};
   }
+  console.log(`Progress object being merged: ${JSON.stringify(progress)}`);
 
   var key = id;
   if (id === 'deploy') {

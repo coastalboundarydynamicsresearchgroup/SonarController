@@ -11,7 +11,7 @@ configurationpath = '/sonar/configuration/'
 
 def ExecuteDeploy(runstate):
   """ Callback sent to the file watcher that allows
-      the deployment to run whant a runfile is present.
+      the deployment to run when a runfile is present.
   """
   deployer = SonarDeployCompose(runstate, debug)
   sonar = SonarCommChannel(runstate)
@@ -30,7 +30,4 @@ if len(sys.argv) > 1:
 watcher = Watcher(ExecuteDeploy)
 watcher.run()
 
-
-result = { 'result': 201, 'message': 'deployment complete' }
-print(json.dumps(result))
 exit(0)
