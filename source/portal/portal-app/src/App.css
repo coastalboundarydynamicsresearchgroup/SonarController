@@ -126,10 +126,61 @@ div.configurationfield {
   justify-content: center;
 }
 
+div.configurationcheckbox {
+  font-size: 13pt;
+  width: 120px;
+  margin: 15px 5px 2px 10px;
+}
+
+span.reddot {
+  height: 25px;
+  width: 25px;
+  background-color: #b00;
+  border-radius: 50%;
+}
+
+span.greendot {
+  height: 15px;
+  width: 15px;
+  background-color: #0b0;
+  border-radius: 50%;
+}
+
+span.greydot {
+  height: 15px;
+  width: 15px;
+  background-color: #555;
+  border-radius: 50%;
+}
+
 div.progressfield {
   font-size: 9pt;
-  width: 800px;
+  width: 550px;
   margin: 10px 5px 10px 10px;
+  display: flex;
+  flex-direction:column;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+div.updatefield {
+  font-size: 9pt;
+  width: 40px;
+  margin: 10px 10px 10px 3px;
+  display: flex;
+  flex-direction:column;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+div.updatefield input {
+  width: 33px;
+}
+
+div.colordot {
+  font-size: 9pt;
+  width: 60px;
+  margin: 0px 0 10px 0;
   display: flex;
   flex-direction:column;
   flex-wrap: wrap;

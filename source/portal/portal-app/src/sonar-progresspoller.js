@@ -13,12 +13,16 @@ const PollProgress = () => {
       if (messages) {
         // TODO
       }
+      /*
       const progressfield = document.getElementById('progress');
       if (progressfield && response.status) {
         progressfield.value = response.status;
       }
+      */
       SonarProgressPollerSingleton.instance.progress = response;
-      console.log(SonarProgressPollerSingleton.instance.progress);
+      if (SonarProgressPollerSingleton.progressFunc) {
+        SonarProgressPollerSingleton.progressFunc(response);
+      }
     });
 
     setTimeout(PollProgress, 1000);
@@ -37,7 +41,11 @@ class SonarProgressPollerSingleton {
     throw new Error('Use SonarProgressPollerSingleton.getInstance()');
   }
   
-  static getInstance() {
+  static getInstance(updateProgressFunc=null) {
+    if (updateProgressFunc) {
+      SonarProgressPollerSingleton.progressFunc = updateProgressFunc;
+    }
+
     if (!SonarProgressPollerSingleton.instance) {
         SonarProgressPollerSingleton.instance = new progressPoller();
     }

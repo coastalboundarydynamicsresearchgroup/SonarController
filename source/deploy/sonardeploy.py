@@ -12,6 +12,7 @@ class SonarDeploy:
         self.onStatus = onStatus
         self.scanSequence = 1
         self.downwardSequence = 1
+        print('Creating SonarDeploy for configuration ' + self.configurationName)
 
         if not os.path.exists(dataPathRoot):
             os.makedirs(dataPathRoot)
@@ -33,6 +34,7 @@ class SonarDeploy:
 
     def doSonarStep(self):
         sonarParameters = self.buildSonarDownwardStepParameters()
+        self.onStatus('Performing sonar Downward step with sector width ' + str(sonarParameters['sector_width']) + ' and train angle ' + str(sonarParameters['train_angle']), logToFile=False, logToProgress=True, options={'count':self.downwardSequence})
         response = self.sonar.execute(sonarParameters, self.sonarFilePath + 'sonarStep' + str(self.downwardSequence) + '.dat', self.onStatus)
         self.downwardSequence += 1
 
@@ -45,6 +47,7 @@ class SonarDeploy:
     def doSonarScan(self):
         sonarParameters = self.buildSonarScanStepParameters()
         step_count = int(sonarParameters['sector_width'] / sonarParameters['step_size'] * 2) + 1
+        self.onStatus('Performing sonar Scan step with sector width ' + str(sonarParameters['sector_width']) + ' and step size ' + str(sonarParameters['step_size']) + ' resulting in ' + str(step_count) + ' steps', logToFile=False, logToProgress=True, options={'count':self.scanSequence})
         response = self.sonar.execute(sonarParameters, self.sonarFilePath + 'sonarScan' + str(self.scanSequence) + '.dat', self.onStatus, step_count)
         self.scanSequence += 1
 

@@ -20,22 +20,31 @@ with open('/configuration/configuration.json') as f:
 baseBackendUrl = 'http://' + configuration['services']['backend']['host'] + ':' + configuration['services']['backend']['port']
 
 
-def emit_status(message):
+def emit_status(message, logToFile=True, logToProgress=False, options=None):
   global logFile
   global debug_mode
 
-  status = message.replace('"', '\\\"')
-  payload = {'status': status}
-  requests.put(baseBackendUrl + '/sonar/progress/deploy', json=payload)
+  if logToProgress:
+    payload = {}
+    if options:
+      payload = options
 
-  utcDateTime = time.gmtime()
-  timestamp = "{year:04d}-{month:02d}-{day:02d} {hour:02d}:{minute:02d}:{second:02d}".format(year=utcDateTime.tm_year, month=utcDateTime.tm_mon, day=utcDateTime.tm_mday, hour=utcDateTime.tm_hour, minute=utcDateTime.tm_min, second=utcDateTime.tm_sec)
+    if message and len(message) > 0:
+      status = message.replace('"', '\\\"')
+      payload['status'] = status
 
-  if debug_mode:
-    print(timestamp + ': ' + message)
+    requests.put(baseBackendUrl + '/sonar/progress/deploy', json=payload)
 
-  with open(logFile, "a") as outfile:
-    outfile.write(timestamp + ': ' + message + '\n')
+  if message and len(message) > 0:
+    utcDateTime = time.gmtime()
+    timestamp = "{year:04d}-{month:02d}-{day:02d} {hour:02d}:{minute:02d}:{second:02d}".format(year=utcDateTime.tm_year, month=utcDateTime.tm_mon, day=utcDateTime.tm_mday, hour=utcDateTime.tm_hour, minute=utcDateTime.tm_min, second=utcDateTime.tm_sec)
+
+    if logToFile:
+      if debug_mode:
+        print(timestamp + ': ' + message)
+
+      with open(logFile, "a") as outfile:
+        outfile.write(timestamp + ': ' + message + '\n')
 
 
 
@@ -70,9 +79,12 @@ class SonarDeployCompose:
     delay_seconds = int(delay_minutes * 60)
 
     emit_status('Waiting for ' + str(delay_seconds) + ' seconds')
-    for _ in range(delay_seconds):
+    for second in range(delay_seconds):
+      emit_status('Startup delay', logToFile=False, logToProgress=True, options={'delaySec':delay_seconds - second})
       time.sleep(1)
-    emit_status('Done waiting ' + str(delay_seconds) + ' seconds')
+      if not self.runstate.is_running():
+        break
+    emit_status('Done waiting ' + str(delay_seconds) + ' seconds', logToProgress=True, options={'delaySec':0})
 
 
   def downwardStep(self, deployer, period, count):
@@ -140,7 +152,7 @@ class SonarDeployCompose:
     scanSamplingTime = self.runstate.configuration['deployment']['scansamplingtime'] * 60
     scanSamplePeriod = self.runstate.configuration['scan']['sampleperiod']
 
-    emit_status('Composing downward sample time ' + str(downwardSamplingTime) + ' period ' + str(downwardSamplePeriod) + ', scan sample time ' + str(scanSamplingTime) + ' period ' + str(scanSamplePeriod))
+    emit_status('Composing downward sample time ' + str(downwardSamplingTime) + ' period ' + str(downwardSamplePeriod) + ', scan sample time ' + str(scanSamplingTime) + ' period ' + str(scanSamplePeriod), logToProgress=True, options={'deployrunning':True})
     downwardCount = 0
     if downwardSamplingTime > 0 and downwardSamplePeriod > 0:
       downwardCount = math.ceil(downwardSamplingTime / downwardSamplePeriod)
@@ -157,6 +169,6 @@ class SonarDeployCompose:
       self.downwardStep(deployer, downwardSamplePeriod, downwardCount)
       self.scanStep(deployer, scanSamplePeriod, scanCount)
 
-    emit_status('Compose and deploy' + str(self.runstate.configurationName) + ' complete')
+    emit_status("Compose and deploy '" + self.runstate.get_configurationName() + "' complete", logToProgress=True, options={'deploying':False,'deployrunning':False})
 
 

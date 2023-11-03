@@ -58,7 +58,7 @@ class DeployHandler(FileSystemEventHandler):
 
     def handleDeleted(self, path):
         if path[-18:] == "__runfile__.deploy":
-            self.runstate.Reset()
+            self.runstate.running = False
 
     def reevaluate(self, runFilePath):
         configurationName = ''
@@ -112,6 +112,7 @@ class Watcher:
             if self.handler.runstate.is_running():
                 print('Runstate is running, calling run handler')
                 self.runHandler(self.handler.runstate)
+                self.handler.runstate.Reset()
         #except:
         #    self.observer.stop()
         self.observer.join()

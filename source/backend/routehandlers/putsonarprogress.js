@@ -11,13 +11,12 @@ const commonKey = singleton.getCommonKey();
 //
 var putSonarProgress = function(req, res) {
   const { id } = req.params;
-  console.log(`PUT progress for id '${id}'`);
+  //console.log(`PUT progress for id '${id}'`);
 
   var progress = req.body;
   if (!progress) {
     progress = {"status":"bad update"};
   }
-  console.log(`Progress object being merged: ${JSON.stringify(progress)}`);
 
   var key = id;
   if (id === 'deploy') {

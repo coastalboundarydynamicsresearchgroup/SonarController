@@ -1,16 +1,60 @@
 import { useState, useEffect } from 'react';
 import './App.css';
 import SonarConfigField from './sonar-configfield';
+import SonarCheckBox from './sonar-checkbox';
 import SonarProgressField from './sonar-progressfield';
+import SonarUpdateField from './sonar-updatefield';
+import SonarStatusLed from './sonar-statusled';
 import SonarProgressPollerSingleton from './sonar-progresspoller';
 import configuration from './configuration/configuration.json';
 const baseBackendUrl = 'http://' + configuration.services.backend.host + ':' + configuration.services.backend.port;
 
 
 const SonarConfigBoxNormal = ({onChangeFunc}) => {
+  const [deploying, setDeploying] = useState(false);
+  const [deployrunning, setDeployrunning] = useState(false);
+
+  const handleProgressUpdate = (progress) => {
+    console.log(progress);
+
+    const progressfield = document.getElementById('progress');
+    if (progressfield) {
+      if (progress.status) {
+        progressfield.value = progress.status;
+      }
+    }
+
+    const timeremainingfield = document.getElementById('timeremaining');
+    if (timeremainingfield) {
+      if (progress.delaySec != null) {
+        timeremainingfield.value = progress.delaySec;
+      }
+    }
+
+    const iterationfield = document.getElementById('iteration');
+    if (iterationfield) {
+      if (progress.count != null) {
+        iterationfield.value = progress.count;
+      }
+    }
+
+    if (progress.deploying != null) {
+      setDeploying(progress.deploying);
+    }
+
+    if (progress.deployrunning != null) {
+      setDeployrunning(progress.deployrunning);
+    }
+  }
+
   useEffect(() => {
-    SonarProgressPollerSingleton.getInstance();
+    SonarProgressPollerSingleton.getInstance(handleProgressUpdate);
   }, []);
+
+
+  const makecolor = () => {
+    return "green";
+  }
 
   return (
         <div className="configurationbox">
@@ -23,7 +67,16 @@ const SonarConfigBoxNormal = ({onChangeFunc}) => {
               <SonarConfigField fieldname="scansamplingtime" fieldTitle="Minutes for Scan Sampling" initialValue="0" onChangeFunc={onChangeFunc}></SonarConfigField>
             </div>
             <div className="configurationrow">
+              <SonarConfigField fieldname="sampleperiod" fieldTitle="Minutes between Samples" initialValue="0" onChangeFunc={onChangeFunc}></SonarConfigField>
+              <SonarCheckBox fieldname="scancheckbox" fieldTitle="Scan" initialValue="scan" onChangeFunc={onChangeFunc}></SonarCheckBox>
+              <SonarCheckBox fieldname="downwardcheckbox" fieldTitle="Downward" initialValue="downward" onChangeFunc={onChangeFunc}></SonarCheckBox>
+            </div>
+            <div className="configurationrow">
               <SonarProgressField fieldname="progress" fieldTitle="Progress" initialValue=""></SonarProgressField>
+              <SonarUpdateField fieldname="timeremaining" fieldTitle="Seconds" initialValue=""></SonarUpdateField>
+              <SonarUpdateField fieldname="iteration" fieldTitle="Count" initialValue=""></SonarUpdateField>
+              <SonarStatusLed fieldTitle="Deploy Starting" value={deploying}></SonarStatusLed>
+              <SonarStatusLed fieldTitle="Deploy Running" value={deployrunning}></SonarStatusLed>
             </div>
           </div>
 
