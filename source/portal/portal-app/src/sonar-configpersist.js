@@ -95,6 +95,10 @@ const ValidateFloatField = (fieldName, minValue, maxValue, increment) => {
   return parsedFloat;
 }
 
+const ValidateCheckField = (fieldName) => {
+  const fieldValue = document.getElementById(fieldName).checked;
+  return fieldValue;
+}
 
 const WriteConfiguration = (onDoneHandler) => {
   isValidInput = true;
@@ -102,8 +106,11 @@ const WriteConfiguration = (onDoneHandler) => {
   var deployment = {};
   deployment.minutes = ValidateIntField("minutes", 0, 59);
   deployment.pingdatapoints = ValidateIntField("pingdatapoints", 250, 500, 250);
-  deployment.downwardsamplingtime = ValidateIntField("downwardsamplingtime", 0, 5000);
-  deployment.scansamplingtime = ValidateIntField("scansamplingtime", 0, 5000);
+  deployment.downwardsamplingtime = ValidateIntField("downwardsamplingtime", 0, 5000);  // TODO - remove this
+  deployment.scansamplingtime = ValidateIntField("scansamplingtime", 0, 5000);          // TODO - remove this
+  deployment.sampleperiod = ValidateFloatField("sampleperiod", 0.0, 1000000.0, 0.01);
+  deployment.scanenabled = ValidateCheckField("scancheckbox");
+  deployment.downwardenabled = ValidateCheckField("downwardcheckbox");
 
   var downward = {};
   downward.range = ValidateIntField("downwardrange", 1, 200);

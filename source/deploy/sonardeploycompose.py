@@ -87,7 +87,7 @@ class SonarDeployCompose:
     emit_status('Done waiting ' + str(delay_seconds) + ' seconds', logToProgress=True, options={'delaySec':0})
 
 
-  def downwardStep(self, deployer, period, count):
+  def downwardStep_old(self, deployer, period, count):
     if count == 0:
       emit_status('')
       emit_status('Downward(' + self.runstate.configurationName + ') being skipped')
@@ -114,7 +114,7 @@ class SonarDeployCompose:
         time.sleep(period - duration)
 
 
-  def scanStep(self, deployer, period, count):
+  def scanStep_old(self, deployer, period, count):
     if count == 0:
       emit_status('')
       emit_status('Scan(' + self.runstate.configurationName + ') being skipped')
@@ -142,7 +142,7 @@ class SonarDeployCompose:
 
 
 
-  def compose_and_deploy(self, sonar):
+  def compose_and_deploy_old(self, sonar):
     deployer = SonarDeploy(sonar, self.runstate.get_configurationName(), self.runstate.get_configuration(), emit_status)
     deployer.makeNewDataFolder()
 
@@ -166,9 +166,61 @@ class SonarDeployCompose:
     self.delay_start()
 
     while self.runstate.is_running():
-      self.downwardStep(deployer, downwardSamplePeriod, downwardCount)
-      self.scanStep(deployer, scanSamplePeriod, scanCount)
+      self.downwardStep_old(deployer, downwardSamplePeriod, downwardCount)
+      self.scanStep_old(deployer, scanSamplePeriod, scanCount)
 
     emit_status("Compose and deploy '" + self.runstate.get_configurationName() + "' complete", logToProgress=True, options={'deploying':False,'deployrunning':False})
 
 
+  def downwardStep(self, deployer):
+      emit_status('')
+      emit_status('Downward(' + self.runstate.configurationName + ')')
+      result = deployer.doSonarStep()
+      if result['success']:
+        emit_status('Downward(' + self.runstate.configurationName + ') completed with ' + str(result['response']['count']) + ' steps')
+      else:
+        emit_status('Error during downward(' + str(self.runstate.configurationName) + ': ' + result['message'])
+
+
+
+  def scanStep(self, deployer):
+    emit_status('')
+    emit_status('Scan(' + self.runstate.configurationName + ')')
+    result = deployer.doSonarScan()
+    if result['success']:
+      emit_status('Scan(' + self.runstate.configurationName + ') completed with ' + str(result['response']['count']) + ' steps')
+    else:
+      emit_status('Error during scan(' + str(self.runstate.configurationName) + ': ' + result['message'])
+
+
+
+  def compose_and_deploy(self, sonar):
+    deployer = SonarDeploy(sonar, self.runstate.get_configurationName(), self.runstate.get_configuration(), emit_status)
+    deployer.makeNewDataFolder()
+
+    # All times in seconds.
+    samplePeriod = self.runstate.configuration['deployment']['sampleperiod'] * 60
+    scanEnabled = self.runstate.configuration['deployment']['scanenabled']
+    downwardEnabled = self.runstate.configuration['deployment']['downwardenabled']
+
+    emit_status('Composing deployment with scan ' + 'enabled' if scanEnabled else 'disabled' + ', downward ' + 'enabled' if downwardEnabled else 'disabled' + ' and period ' + str(samplePeriod) + ' seconds', logToProgress=True, options={'deployrunning':True})
+
+    self.delay_start()
+
+    while self.runstate.is_running():
+      start_timestamp = time.time()
+
+      if scanEnabled:
+        self.scanStep(deployer)
+      if downwardEnabled:
+        self.downwardStep(deployer)
+
+      end_timestamp = time.time()
+      duration = end_timestamp - start_timestamp
+      while self.runstate.is_running() and duration < samplePeriod:
+        emit_status('Pausing between samples with sampling period ' + str(samplePeriod), logToFile=False, logToProgress=True, options={'delaySec':(samplePeriod - duration)})
+        time.sleep(1)
+        duration += 1
+      emit_status('', logToProgress=True, options={'delaySec':(0)})
+
+    emit_status("Compose and deploy '" + self.runstate.get_configurationName() + "' complete", logToFile=False, logToProgress=True, options={'deploying':False,'deployrunning':False})

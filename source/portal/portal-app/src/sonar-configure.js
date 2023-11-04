@@ -98,7 +98,7 @@ const SonarConfigure = ({getState, setState, onTestClicked, onPingData, test}) =
         messages.value += response.response + '\n';
         if (response.progress) {
           console.log(`Got deploy/undeploy response with deploying ${response.progress.deploying} and deployrunning ${response.progress.deployrunning}`);
-          deployFlag = !response.progress.deploying && !response.progress.deployrunning;
+          deployFlag = !response.progress.deploying /*&& !response.progress.deployrunning*/;
           setDeployButtonLabel(deployFlag ? "Deploy" : "Undeploy");
         }
       }
