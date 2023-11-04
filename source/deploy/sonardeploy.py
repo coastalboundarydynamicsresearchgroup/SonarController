@@ -31,11 +31,24 @@ class SonarDeploy:
         with open(self.sonarFilePath + "configuration.json", "w") as outfile:
             outfile.write(config)
 
+        with open(self.sonarFilePath + "RunIndex.csv", "w") as outfile:
+            outfile.write("Time Stamp,Type,File\n")
+
+
+    def doSonarIndex(self, type, file):
+        utcDateTime = time.gmtime()
+        timestamp = "{year:04d}-{month:02d}-{day:02d} {hour:02d}:{minute:02d}:{second:02d}".format(year=utcDateTime.tm_year, month=utcDateTime.tm_mon, day=utcDateTime.tm_mday, hour=utcDateTime.tm_hour, minute=utcDateTime.tm_min, second=utcDateTime.tm_sec)
+
+        with open(self.sonarFilePath + "RunIndex.csv", "a") as outfile:
+            outfile.write(timestamp + "," + type + "," + file + "\n")
+
 
     def doSonarStep(self):
         sonarParameters = self.buildSonarDownwardStepParameters()
         self.onStatus('Performing sonar Downward step with sector width ' + str(sonarParameters['sector_width']) + ' and train angle ' + str(sonarParameters['train_angle']), logToFile=False, logToProgress=True, options={'count':self.downwardSequence})
-        response = self.sonar.execute(sonarParameters, self.sonarFilePath + 'sonarStep' + str(self.downwardSequence) + '.dat', self.onStatus)
+        file = 'sonarStep' + str(self.downwardSequence) + '.dat'
+        self.doSonarIndex('downward', file)
+        response = self.sonar.execute(sonarParameters, self.sonarFilePath + file, self.onStatus)
         self.downwardSequence += 1
 
         result = {}
@@ -48,7 +61,9 @@ class SonarDeploy:
         sonarParameters = self.buildSonarScanStepParameters()
         step_count = int(sonarParameters['sector_width'] / sonarParameters['step_size'] * 2) + 1
         self.onStatus('Performing sonar Scan step with sector width ' + str(sonarParameters['sector_width']) + ' and step size ' + str(sonarParameters['step_size']) + ' resulting in ' + str(step_count) + ' steps', logToFile=False, logToProgress=True, options={'count':self.scanSequence})
-        response = self.sonar.execute(sonarParameters, self.sonarFilePath + 'sonarScan' + str(self.scanSequence) + '.dat', self.onStatus, step_count)
+        file = 'sonarScan' + str(self.downwardSequence) + '.dat'
+        self.doSonarIndex('scan', file)
+        response = self.sonar.execute(sonarParameters, self.sonarFilePath + file, self.onStatus, step_count)
         self.scanSequence += 1
 
         result = {}

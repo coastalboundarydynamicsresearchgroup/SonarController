@@ -63,8 +63,6 @@ const SonarConfigBoxNormal = ({onChangeFunc}) => {
             <div className="configurationrow">
               <SonarConfigField fieldname="minutes" fieldTitle="Delay to start (minutes)" initialValue="5" onChangeFunc={onChangeFunc}></SonarConfigField>
               <SonarConfigField fieldname="pingdatapoints" fieldTitle="Data Points (250, 500)" initialValue="500" onChangeFunc={onChangeFunc}></SonarConfigField>
-              <SonarConfigField fieldname="downwardsamplingtime" fieldTitle="Minutes for Downward Sampling" initialValue="0" onChangeFunc={onChangeFunc}></SonarConfigField>
-              <SonarConfigField fieldname="scansamplingtime" fieldTitle="Minutes for Scan Sampling" initialValue="0" onChangeFunc={onChangeFunc}></SonarConfigField>
             </div>
             <div className="configurationrow">
               <SonarConfigField fieldname="sampleperiod" fieldTitle="Minutes between Samples" initialValue="0" onChangeFunc={onChangeFunc}></SonarConfigField>
@@ -92,7 +90,6 @@ const SonarConfigBoxNormal = ({onChangeFunc}) => {
               <SonarConfigField fieldname="downwardtrainangle" fieldTitle="Train Angle (-180-180deg) inc=3" initialValue="0" onChangeFunc={onChangeFunc}></SonarConfigField>
             </div>
             <div className="configurationrow">
-              <SonarConfigField fieldname="downwardsampleperiod" fieldTitle="Seconds between Samples" initialValue="600" onChangeFunc={onChangeFunc}></SonarConfigField>
               <SonarConfigField fieldname="downwardabsorption" fieldTitle="Absorption (0.00-2.55db) inc=0.01" initialValue="60" onChangeFunc={onChangeFunc}></SonarConfigField>
               <SonarConfigField fieldname="downwardpulselength" fieldTitle="Pulse Length (10-1000us) inc=10" initialValue="4" onChangeFunc={onChangeFunc}></SonarConfigField>
             </div>
@@ -112,7 +109,6 @@ const SonarConfigBoxNormal = ({onChangeFunc}) => {
               <SonarConfigField fieldname="step_size" fieldTitle="Step Size (0-2.4deg) inc 0.3" initialValue="0" onChangeFunc={onChangeFunc}></SonarConfigField>
             </div>
             <div className="configurationrow">
-              <SonarConfigField fieldname="scansampleperiod" fieldTitle="Seconds between Samples" initialValue="600" onChangeFunc={onChangeFunc}></SonarConfigField>
               <SonarConfigField fieldname="scanabsorption" fieldTitle="Absorption (0.00-2.55db) inc=0.01" initialValue="60" onChangeFunc={onChangeFunc}></SonarConfigField>
               <SonarConfigField fieldname="scanpulselength" fieldTitle="Pulse Length (10-1000us) inc=10" initialValue="20" onChangeFunc={onChangeFunc}></SonarConfigField>
             </div>

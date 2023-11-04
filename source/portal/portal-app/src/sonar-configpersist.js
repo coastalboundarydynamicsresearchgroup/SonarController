@@ -5,15 +5,15 @@ const baseBackendUrl = 'http://' + configuration.services.backend.host + ':' + c
 const DistributeConfiguration = (configuration) => {
   document.getElementById("minutes").value = configuration.deployment.minutes;
   document.getElementById("pingdatapoints").value = configuration.deployment.pingdatapoints;
-  document.getElementById("downwardsamplingtime").value = configuration.deployment.downwardsamplingtime;
-  document.getElementById("scansamplingtime").value = configuration.deployment.scansamplingtime;
+  document.getElementById("sampleperiod").value = configuration.deployment.sampleperiod;
+  document.getElementById("scancheckbox").checked = configuration.deployment.scanenabled;
+  document.getElementById("downwardcheckbox").checked = configuration.deployment.downwardenabled;
 
   document.getElementById("downwardrange").value = configuration.downward.range;
   document.getElementById("downwardfrequency").value = configuration.downward.frequency;
   document.getElementById("downwardlogf").value = configuration.downward.logf;
   document.getElementById("downwardstartgain").value = configuration.downward.startgain;
   document.getElementById("downwardtrainangle").value = configuration.downward.trainangle;
-  document.getElementById("downwardsampleperiod").value = configuration.downward.sampleperiod;
   document.getElementById("downwardabsorption").value = configuration.downward.absorption;
   document.getElementById("downwardpulselength").value = configuration.downward.pulselength;
 
@@ -24,7 +24,6 @@ const DistributeConfiguration = (configuration) => {
   document.getElementById("scansectorwidth").value = configuration.scan.sectorwidth;
   document.getElementById("scantrainangle").value = configuration.scan.trainangle;
   document.getElementById("step_size").value = configuration.scan.step_size;
-  document.getElementById("scansampleperiod").value = configuration.scan.sampleperiod;
   document.getElementById("scanabsorption").value = configuration.scan.absorption;
   document.getElementById("scanpulselength").value = configuration.scan.pulselength;
 }
@@ -106,8 +105,6 @@ const WriteConfiguration = (onDoneHandler) => {
   var deployment = {};
   deployment.minutes = ValidateIntField("minutes", 0, 59);
   deployment.pingdatapoints = ValidateIntField("pingdatapoints", 250, 500, 250);
-  deployment.downwardsamplingtime = ValidateIntField("downwardsamplingtime", 0, 5000);  // TODO - remove this
-  deployment.scansamplingtime = ValidateIntField("scansamplingtime", 0, 5000);          // TODO - remove this
   deployment.sampleperiod = ValidateFloatField("sampleperiod", 0.0, 1000000.0, 0.01);
   deployment.scanenabled = ValidateCheckField("scancheckbox");
   deployment.downwardenabled = ValidateCheckField("downwardcheckbox");
@@ -118,7 +115,6 @@ const WriteConfiguration = (onDoneHandler) => {
   downward.logf = ValidateIntField("downwardlogf", 10, 40, 10);
   downward.startgain = ValidateIntField("downwardstartgain", 0, 40);
   downward.trainangle = ValidateIntField("downwardtrainangle", -180.0, 180, 3);
-  downward.sampleperiod = ValidateIntField("downwardsampleperiod", 1, 600);
   downward.absorption = ValidateFloatField("downwardabsorption", 0.0, 2.55, 0.01);
   downward.pulselength = ValidateIntField("downwardpulselength", 10, 1000, 10);
 
@@ -130,7 +126,6 @@ const WriteConfiguration = (onDoneHandler) => {
   scan.sectorwidth = ValidateIntField("scansectorwidth", 0, 360, 3);
   scan.trainangle = ValidateIntField("scantrainangle", -180.0, 180, 3);
   scan.step_size = ValidateFloatField("step_size", 0.0, 2.4, 0.3);
-  scan.sampleperiod = ValidateIntField("scansampleperiod", 1, 600);
   scan.absorption = ValidateFloatField("scanabsorption", 0.0, 2.55, 0.01);
   scan.pulselength = ValidateIntField("scanpulselength", 10, 1000, 10);
 
