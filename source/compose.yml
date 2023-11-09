@@ -24,3 +24,17 @@ services:
       - "./configuration/:/app/portal-app/src/configuration"
     depends_on:
       - sonar-backend
+  sonar-deploy:
+    container_name: sonar-deploy
+    build: "./deploy"
+    image: "louisross/sonar-deploy:1.1"
+    devices:
+      - "/dev/ttyUSB0:/dev/ttyUSB0"
+    tty: true
+    command: 'python3 deploy.py'
+    volumes:
+      - "./deploy:/usr/src/app"
+      - "./configuration/:/configuration"
+      - "/mnt/m2/sonar/:/sonar"
+    depends_on:
+      - sonar-backend

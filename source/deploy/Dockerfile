@@ -23,4 +23,4 @@ COPY . .
 
 EXPOSE 5000
 
-CMD ["bash"]
+CMD ["python3", "./deploy.py"]
