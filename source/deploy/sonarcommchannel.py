@@ -99,7 +99,6 @@ class SonarCommChannel:
       else:
         append_write = 'w'
       with open(filepath, append_write + 'b') as file:
-        onStatus('Writing ' + str(len(sonar_data)) + ' received bytes to file ' + filepath)
         file.write(sonar_data)
 
     if len(sonar_data) > 12:
@@ -117,11 +116,9 @@ class SonarCommChannel:
         for val in sonar_data[12:-1]:
             data += "{0:02x}".format(val)
         response["data"] = data
-        onStatus('Response has step direction=' + str(response['stepdirection']) + ', head position=' + str(response['headpos']) + ', data byte count=' + str(response['databytes']))
-        #print(response) # TODO - test only, remove
+        #onStatus('Response has step direction=' + str(response['stepdirection']) + ', head position=' + str(response['headpos']) + ', data byte count=' + str(response['databytes']))
     else:
       onStatus('Bad response with total length=' + str(len(sonar_data)))
-      #print(response) # TODO - test only, remove
 
     return response
 

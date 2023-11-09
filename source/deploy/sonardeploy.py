@@ -2,37 +2,16 @@ import os
 import time
 import json
 
-dataPathRoot = '/sonar/data/'
-
 class SonarDeploy:
-    def __init__(self, sonar, configurationName, configuration, onStatus):
+    def __init__(self, sonar, sonarFilePath, configurationName, configuration, onStatus):
         self.sonar = sonar
+        self.sonarFilePath = sonarFilePath
         self.configurationName = configurationName
         self.configuration = configuration
         self.onStatus = onStatus
         self.scanSequence = 1
         self.downwardSequence = 1
         print('Creating SonarDeploy for configuration ' + self.configurationName)
-
-        if not os.path.exists(dataPathRoot):
-            os.makedirs(dataPathRoot)
-
-    def makeNewDataFolder(self):
-        utcDateTime = time.gmtime()
-        data_folder = "{year:04d}-{month:02d}-{day:02d}_{hour:02d}:{minute:02d}:{second:02d}".format(year=utcDateTime.tm_year, month=utcDateTime.tm_mon, day=utcDateTime.tm_mday, hour=utcDateTime.tm_hour, minute=utcDateTime.tm_min, second=utcDateTime.tm_sec)
-        self.sonarFilePath = dataPathRoot + data_folder + '/'
-        self.onStatus('Making new sonar data path ' + self.sonarFilePath)
-        if not os.path.exists(self.sonarFilePath):
-            os.makedirs(self.sonarFilePath)
-
-        self.configuration['name'] = self.configurationName
-        config = json.dumps(self.configuration, indent=4)
- 
-        with open(self.sonarFilePath + "configuration.json", "w") as outfile:
-            outfile.write(config)
-
-        with open(self.sonarFilePath + "RunIndex.csv", "w") as outfile:
-            outfile.write("Time Stamp,Type,File\n")
 
 
     def doSonarIndex(self, type, file):
