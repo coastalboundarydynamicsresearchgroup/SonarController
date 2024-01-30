@@ -22,6 +22,7 @@ services:
     volumes:
       - "./portal/:/app"
       - "./configuration/:/app/portal-app/src/configuration"
+      - "/mnt/m2/sonar/:/app/portal-app/public/sonar"
     depends_on:
       - sonar-backend
   sonar-deploy:

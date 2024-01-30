@@ -9,6 +9,7 @@ const getConfigurations = require('./routehandlers/getconfigurations');
 const putconfiguration = require('./routehandlers/putconfiguration');
 const getconfiguration = require('./routehandlers/getconfiguration');
 const deleteconfiguration = require('./routehandlers/deleteconfiguration');
+const getDataset = require('./routehandlers/getdataset');
 const postSonarSwitch = require('./routehandlers/postsonarswitch');
 const {putSonarDeploy, putSonarUndeploy} = require('./routehandlers/putsonardeploy');
 const getDeployProgress = require('./routehandlers/getdeployprogress');
@@ -35,6 +36,9 @@ router.get('/configuration/:configurationName', [getconfiguration]);
 
 // Delete the content of the specified configuration under the specified name.
 router.delete('/configuration/:configurationName', [deleteconfiguration]);
+
+// Get the zipped data results from any and all previous deployments.
+router.get('/dataset', [getDataset]);
 
 // Put the content of the specified configuration under the specified name.
 router.post('/sonar/switch', [postSonarSwitch]);
