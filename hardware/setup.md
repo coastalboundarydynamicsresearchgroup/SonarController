@@ -211,7 +211,7 @@ At the bottom, enter a line like
 
 - Enable the wifi hotspot with
 
-`sudo nmcli d wifi hotspot ifname wlo1 ssid Sonar881 password Sonar881`
+`sudo nmcli d wifi hotspot ifname wlo1 ssid Sonar1 password Sonar881`
 
 - Re-entering `nmcli d` command should now show the wifi hotspot connected:
 
@@ -242,7 +242,7 @@ To make the above change take effect, restart the network-manager service:
 
 and then re-issue the manual hotspot command:
 
-`sudo nmcli d wifi hotspot ifname wlo1 ssid Sonar881 password Sonar881`
+`sudo nmcli d wifi hotspot ifname wlo1 ssid Sonar1 password Sonar881`
 
 
 The above procedure is a proof of concept, not a permanent solution, because it requires you to enable the wifi hotspot manually after every boot.  To enable the wifi hotspot automatically on every boot, we will create a cron job that runs on startup.  The cron job will run a shell script, so we need to provide that as well.
@@ -263,11 +263,7 @@ The above procedure is a proof of concept, not a permanent solution, because it 
 
 `cd bootfiles`
 
-`scp start-hotspot1.sh sonar881@sonarcontroller1:/home/sonar881/start-hotspot.sh`
-
-- Log into the SBC and install in the correct directory:
-
-`sudo cp start-hotspot.sh /usr/local/bin`
+`sudo cp start-hotspot1.sh /usr/local/bin/start-hotspot.sh`
 
 `chmod 744 /usr/local/bin/start-hotspot.sh`
 
