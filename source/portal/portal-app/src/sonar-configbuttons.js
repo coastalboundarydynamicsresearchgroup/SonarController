@@ -4,7 +4,7 @@ import SonarProgressPollerSingleton from './sonar-progresspoller';
 import configuration from './configuration/configuration.json';
 const baseBackendUrl = 'http://' + configuration.services.backend.host + ':' + configuration.services.backend.port;
 
-const SonarConfigButtons = ({getStateFunc, deployButtonLabel, onCreateFunc, onSaveFunc, onDeleteFunc, onDeployFunc, onTestClicked, test}) => {
+const SonarConfigButtons = ({getStateFunc, deployButtonLabel, onCreateFunc, onSaveFunc, onDeleteFunc, onDeployFunc, onDownloadFunc, onTestClicked, test}) => {
 
   const GetSelectedConfiguration = () => {
     var selectedConfiguration = -1;
@@ -58,6 +58,13 @@ const SonarConfigButtons = ({getStateFunc, deployButtonLabel, onCreateFunc, onSa
             Test
         </button>
       </div>
+
+      <div className="configuration-buttonrow">
+        <button type="button" id="download-button" onClick={onDownloadFunc}>
+            Download Data
+        </button>
+      </div>
+
     </div>
   )
 }

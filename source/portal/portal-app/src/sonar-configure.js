@@ -71,6 +71,29 @@ const SonarConfigure = ({getState, setState, onTestClicked, onPingData, test}) =
     }
   }
 
+  const onDownload = () => {
+    var init = {
+      method: 'GET',
+      mode: 'cors',
+      headers: {
+        'Content-type': 'application/json'
+      }
+    };
+    
+    fetch(baseBackendUrl + '/dataset', init)
+    .then(data => data.json())
+    .then(response => {
+      console.log(response)
+      const fileName = response.filename + '.zip';
+      const aTag = document.createElement("a");
+      aTag.href = "/sonar/archive/" + fileName;         // Root '/' is the nodejs /public folder
+      aTag.setAttribute("download", "/sonar/archive/" + fileName);
+      document.body.appendChild(aTag);
+      aTag.click();
+      aTag.remove();
+    });
+  }
+
   const GetDeployResponse = () => {
     const messages = document.getElementById('messages');
 
@@ -132,7 +155,7 @@ const SonarConfigure = ({getState, setState, onTestClicked, onPingData, test}) =
           </select>
           Configurations
         </div>
-      <SonarConfigButtons getStateFunc={getState} deployButtonLabel={deployButtonLabel} onCreateFunc={onCreate} onSaveFunc={onSave} onDeleteFunc={onDelete} onDeployFunc={onDeploy} onTestClicked={onTestClicked} test={test} />
+      <SonarConfigButtons getStateFunc={getState} deployButtonLabel={deployButtonLabel} onCreateFunc={onCreate} onSaveFunc={onSave} onDeleteFunc={onDelete} onDeployFunc={onDeploy} onDownloadFunc={onDownload} onTestClicked={onTestClicked} test={test} />
     </div>
   )
 }
