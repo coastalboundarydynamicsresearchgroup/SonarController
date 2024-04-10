@@ -145,3 +145,4 @@ source/pointcloud/*.pcd
 source/pointcloud/__pycache__/
 source/converter/__pycache__/
 
+source/arduino/__pycache__/hardware.cpython-310.pyc
