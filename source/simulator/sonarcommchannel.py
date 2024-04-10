@@ -9,7 +9,7 @@ class SonarCommChannel:
     pass
 
   def __enter__(self):
-    self.ser = serial.Serial('Com4', baudrate=115200, bytesize=8, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
+    self.ser = serial.Serial('/dev/ttyS0', baudrate=115200, bytesize=8, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
     # We wake up once in a while so the program can be interrupted.
     self.ser.timeout = 0.5
   
