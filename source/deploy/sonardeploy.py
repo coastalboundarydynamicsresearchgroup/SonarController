@@ -40,7 +40,7 @@ class SonarDeploy:
         sonarParameters = self.buildSonarScanStepParameters()
         step_count = int(sonarParameters['sector_width'] / sonarParameters['step_size'] * 2) + 1
         self.onStatus('Performing sonar Scan step with sector width ' + str(sonarParameters['sector_width']) + ' and step size ' + str(sonarParameters['step_size']) + ' resulting in ' + str(step_count) + ' steps', logToFile=False, logToProgress=True, options={'count':self.scanSequence})
-        file = 'sonarScan' + str(self.downwardSequence) + '.dat'
+        file = 'sonarScan' + str(self.scanSequence) + '.dat'
         self.doSonarIndex('scan', file)
         response = self.sonar.execute(sonarParameters, self.sonarFilePath + file, self.onStatus, step_count)
         self.scanSequence += 1
