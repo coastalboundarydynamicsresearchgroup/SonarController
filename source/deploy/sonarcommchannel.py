@@ -11,6 +11,7 @@ class SonarCommChannel:
   """
   def __init__(self, runstate):
     self.runstate = runstate
+    self.ending_head_position = None
 
   def __enter__(self):
     self.ser = serial.Serial('/dev/ttyUSB0', baudrate=115200, bytesize=8, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
@@ -23,8 +24,67 @@ class SonarCommChannel:
   def __exit__(self, *args):
     self.ser.close()
 
+  def reorient_head_for_first_scan(self, parameters, onStatus):
+    """ On the first scan, we do a dummy ping, allowing the head to
+        slew to the right angle after that dummy.   Then, we do one
+        good ping, but throw away the data.  This ping will return
+        with a head angle that should be the ending place of all 
+        future scans.
+    """
+    sector_width_save = parameters['sector_width']
+
+    # The first ping may be pointing anywhere, so throw its return away.
+    #response = self.transact_switch_response(command, None, onStatus)
+    #onStatus('Reorienting head, throwaway head angle is ' + str(response['headpos']))
+    parameters['sector_width'] = 0
+    command = self.build_switch_command_from_parameters(parameters, onStatus)
+    self.transact_switch_response(command, None, onStatus)
+
+    # Set the train angle, where the head is now pointing, as the target position
+    # of that terminates every scan.
+    onStatus('Reorienting head, capturing hending head angle of ' + str(parameters['train_angle']))
+    self.ending_head_position = parameters['train_angle']
+
+    # The second ping uses the same sector width as all subsequent scans.  It just
+    # emulates how each scan will end up one ping past the train angle, allowing
+    # the first real scan to start in the same place as all subsequent scans.
+    parameters['sector_width'] = sector_width_save
+    command = self.build_switch_command_from_parameters(parameters, onStatus)
+    self.transact_switch_response(command, None, onStatus)
+
+
   def execute(self, parameters, filepath, onStatus, loop_count=1):
+    """ Execute a downward step or full scan, depending on loop_count.
+        If self.ending_head_position is invalid, and loop_count is > 1,
+        reorient the head angle, this is a first scan.
+    """
+    if not self.ending_head_position and loop_count > 1:
+      self.reorient_head_for_first_scan(parameters, onStatus)
+
     onStatus('Executing with filepath=' + filepath + ", and loop_count=" + str(loop_count))
+    command = self.build_switch_command_from_parameters(parameters, onStatus)
+
+    # The primary loop terminator here is when our head angle returns to self.ending_head_position.
+    # However, we will guard against some coding error or comms error causing this loop to never
+    # terminate by using loop_count as a sentry.
+    ending_head_pos_count = 0
+    loop_sentry = 1 if loop_count == 1 else loop_count + 2
+    while ending_head_pos_count < 2 and (loop_sentry > 0):
+      response = self.transact_switch_response(command, filepath, onStatus)
+      if self.ending_head_position and (response['headpos'] == self.ending_head_position):
+        ending_head_pos_count += 1
+
+      if not self.runstate.is_running():
+        print('Sonar comm loop terminated because we are not running')
+        break
+
+      loop_sentry -= 1
+
+    response = {}
+    response['count'] = loop_count
+    return response
+
+  def build_switch_command_from_parameters(self, parameters, onStatus):
     #print(parameters) # TODO - test only, remove
     sonar_range = parameters['range']
     gain = parameters['gain']
@@ -56,25 +116,20 @@ class SonarCommChannel:
     onStatus('Created switch command: range=' + str(parameters['range']) + ', sector width=' + str(parameters['sector_width']) + ', train angle=' + str(parameters['train_angle']) + ', step size=' + str(parameters['step_size']))
     #print(command) # TODO - test only, remove
 
-    for _ in range(loop_count):
-      running = True
-      try:
-        sonar_data = self.send_switch(command, onStatus)
-        # print(sonar_data)
-        response = {}
-        if sonar_data:
-          response = self.handle_sonar_response(sonar_data, filepath, onStatus)
-        else:
-          response = self.make_dummy_response()
-      except Exception:
-        onStatus('Failure in serial transaction')
+    return command
 
-      if not self.runstate.is_running():
-        print('Sonar comm loop terminated because we are not running')
-        break
-
+  def transact_switch_response(self, command, filepath, onStatus):
     response = {}
-    response['count'] = loop_count
+    try:
+      sonar_data = self.send_switch(command, onStatus)
+      # print(sonar_data)
+      if sonar_data:
+        response = self.handle_sonar_response(sonar_data, filepath, onStatus)
+      else:
+        response = self.make_dummy_response()
+    except Exception:
+      onStatus('Failure in serial transaction')
+
     return response
 
 

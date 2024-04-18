@@ -282,7 +282,7 @@ The above procedure is a proof of concept, not a permanent solution, because it 
 - Use ctrl-X to exit nano, indicating that you want to save.  
 - You should now be able to reboot, and confirm, both with `nmcli d` and by browsing available wifi hotspots with your phone or laptop to find `Sonar881`.
 
-### Set Ethernet to Automatically Obtaine an IP Address
+### Set Ethernet to Automatically Obtain an IP Address
 
 During installation, it may have been necessary to set the IP address of the wired Ethernet to a fixed IP address in order to make the installer work.  If that was done, now is the time to reset it back to a more generally useful state.  The problem is that with a fixed IP address, the wired Ethernet may not work when taken to another network, such as in the field.
 
