@@ -34,7 +34,6 @@
             "includePath": [
                 "/home/sonar881/.arduino15/packages/arduino/hardware/avr/1.8.6/cores/arduino",
                 "/home/sonar881/.arduino15/packages/arduino/hardware/avr/1.8.6/variants/leonardo",
-                "/home/sonar881/.arduino15/packages/arduino/hardware/avr/1.8.6/libraries/SoftwareSerial/src",
                 "/home/sonar881/.arduino15/packages/arduino/tools/avr-gcc/7.3.0-atmel3.6.1-arduino7/lib/gcc/avr/7.3.0/include",
                 "/home/sonar881/.arduino15/packages/arduino/tools/avr-gcc/7.3.0-atmel3.6.1-arduino7/lib/gcc/avr/7.3.0/include-fixed",
                 "/home/sonar881/.arduino15/packages/arduino/tools/avr-gcc/7.3.0-atmel3.6.1-arduino7/avr/include"
