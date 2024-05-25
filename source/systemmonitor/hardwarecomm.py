@@ -28,7 +28,14 @@ class HardwareCommChannel:
       if len(read_data) > 0 and read_data[-1] == 0x0a:
         got_line = True
 
-    return read_data.decode('utf-8').rstrip()
+    return_data = ''
+    try:
+      return_data = read_data.decode('utf-8').rstrip()
+    except:
+      pass
+
+    return return_data
+
 
   def sendCommand(self, command:object):
     """ Serializes and sends a command object to the Sonar881 controller.
@@ -38,6 +45,7 @@ class HardwareCommChannel:
     sent_count = 0
     sent_count = self.ser.write(bytes(commandString, "utf-8"))
     self.ser.flush()
+    print('Sent ' + commandString)
     if sent_count != len(commandString):
       print('Sent ' + str(sent_count) + ' bytes, but should have sent ' + str(len(commandString)))
 
