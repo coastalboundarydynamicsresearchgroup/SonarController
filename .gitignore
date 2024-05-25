@@ -146,3 +146,5 @@ source/pointcloud/__pycache__/
 source/converter/__pycache__/
 
 source/arduino/__pycache__/hardware.cpython-310.pyc
+source/systemmonitor/__pycache__/hardwarecomm.cpython-310.pyc
+source/systemmonitor/__pycache__/monitor.cpython-310.pyc
