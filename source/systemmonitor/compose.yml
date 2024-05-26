@@ -6,6 +6,7 @@ services:
     devices:
       - "/dev/ttyACM0:/dev/ttyACM0"
     tty: false
+    command: 'python3 ./monitor.py'
     volumes:
       - "./:/usr/src/monitor"
       - "../configuration/:/configuration"

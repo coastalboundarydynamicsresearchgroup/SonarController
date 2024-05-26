@@ -1,0 +1,13 @@
+#!/bin/bash
+echo $(pwd)
+docker container run \
+-it \
+--rm \
+--name=sonar-systemmonitor \
+--device /dev/ttyACM0 \
+-v "$(pwd)":/usr/src/monitor \
+-v "$(pwd)/../configuration/:/configuration" \
+-v "/mnt/m2/sonar/:/sonar" \
+-v "/dev/ttyACM0/:/dev/ttyACM0" \
+louisross/sonar-systemmonitor:1.0 \
+bash
