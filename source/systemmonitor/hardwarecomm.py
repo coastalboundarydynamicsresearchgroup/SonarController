@@ -45,7 +45,6 @@ class HardwareCommChannel:
     sent_count = 0
     sent_count = self.ser.write(bytes(commandString, "utf-8"))
     self.ser.flush()
-    print('Sent ' + commandString)
     if sent_count != len(commandString):
       print('Sent ' + str(sent_count) + ' bytes, but should have sent ' + str(len(commandString)))
 

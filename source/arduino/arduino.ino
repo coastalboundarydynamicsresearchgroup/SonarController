@@ -30,7 +30,7 @@ void setup() {
 }
 
 char buffer[200];
-int gotLinefeed = 0;
+int gotLinefeed = 1;
 
 // the loop routine runs over and over again forever:
 void loop() {
