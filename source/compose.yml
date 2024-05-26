@@ -41,12 +41,13 @@ services:
       - sonar-backend
   sonar-systemmonitor:
     container_name: sonar-systemmonitor
-    build: ./systemmonitor
+    build: "./systemmonitor"
     image: "louisross/sonar-systemmonitor:1.0"
     devices:
       - "/dev/ttyACM0:/dev/ttyACM0"
     tty: true
+    command: 'python3 ./monitor.py'
     volumes:
-      - "./:/usr/src/monitor"
+      - "./systemmonitor:/usr/src/monitor"
       - "../configuration/:/configuration"
       - "/mnt/m2/sonar/:/sonar"
