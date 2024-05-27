@@ -112,7 +112,7 @@ def DoVoltageMonitor(debug, comm, batteryVoltage, referenceVoltage):
         if voltageLowConsecutiveTimes <= 0:
             if debug:
                 print(f'Voltage = {batteryVoltage} and reference = {referenceVoltage}, below cutoff {referenceVoltage + cutoff} {voltageLowDebounceCount} times, shutting down')
-            DoShutdown()
+            DoShutdown(debug, comm)
 
 
 
