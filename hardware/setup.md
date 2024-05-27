@@ -377,3 +377,54 @@ To verify that the installation was successful, you can run:
 Confirm the output:
 
 `Docker Compose version v2.20.2`
+
+### Start Docker Containers on Boot
+
+To start the Docker containers that run the system on boot, we install a script that runs every time the computer boots.  Assuming the git repository is cloned on the Sonar controller, follow these steps.
+
+`cd bootfiles`
+
+`sudo cp start-sonarconfig.sh /usr/local/bin`
+
+`chmod 744 /usr/local/bin/start-sonarconfig.sh`
+
+- Now, let's create the cron job to run the script as admin (don't forget the `sudo` here):
+
+`sudo crontab -e`
+
+- When nano starts with the cron job table, use the arrow keys to scroll to the bottom and enter:
+
+`@reboot /usr/local/bin/start-sonarconfig.sh`
+
+- Use ctrl-X to exit nano, indicating that you want to save.  
+
+The `sudo` version of crontab should now look like this:
+
+![crontab](crontab-startconfig.png)
+
+
+### Check for Periodic Shutdown
+
+To shut down the computer on command, we install a script that runs periodically.  The script will check for the existence of a shutdown file and execute the system shutdown if it exists.  All any program needs to do to shut down the computer is to copy a file with the correct name to this location.
+
+Assuming the git repository is cloned on the Sonar controller, follow these steps.
+
+`cd bootfiles`
+
+`sudo cp shutdown.py /usr/local/bin`
+
+`chmod 744 /usr/local/bin/shutdown.py`
+
+- Now, let's create the cron job to run the script as admin (don't forget the `sudo` here):
+
+`sudo crontab -e`
+
+- When nano starts with the cron job table, use the arrow keys to scroll to the bottom and enter:
+
+`*/1 * * * *  python3 /usr/local/bin/shutdown.py`
+
+- Use ctrl-X to exit nano, indicating that you want to save.  
+
+The `sudo` version of crontab should now look like this:
+
+![crontab](crontab-shutdown.png)
