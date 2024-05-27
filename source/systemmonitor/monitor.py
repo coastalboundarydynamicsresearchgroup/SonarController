@@ -89,7 +89,7 @@ def DoVoltageMonitor(debug, comm, batteryVoltage, referenceVoltage):
     # System does not support voltage monitoring, one or both input hard-grounded.
     if batteryVoltage < voltageNotAvailable or referenceVoltage < voltageNotAvailable:
         if debug:
-            print(f'Battery volate {batteryVoltage} or reference voltage {referenceVoltage} below useful value {voltageNotAvailable}, not checking voltage')
+            print(f'Battery voltage {batteryVoltage} or reference voltage {referenceVoltage} below useful value {voltageNotAvailable}, not checking voltage')
         return
 
     cutoff = referenceVoltage * voltageLowPercent / 100
