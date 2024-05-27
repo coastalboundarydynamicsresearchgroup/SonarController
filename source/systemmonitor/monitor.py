@@ -4,10 +4,16 @@ import json
 from hardwarecomm import HardwareCommChannel
 
 def DoShutdown(debug, comm):
-    print(f'TODO: Shutdown')
     result = "Shutdown"
     response = {"Response": result}
     comm.sendCommand(response)
+
+    shutdownFilePath = '/sonar/' + '__poweroff__'
+    
+    with open(shutdownFilePath, "w") as outfile:
+        if debug:
+            print(f'Writing shutdown file at {shutdownFilePath}')
+        outfile.write('shutdown')
 
 configurationPath = '/sonar/configuration/'
 
