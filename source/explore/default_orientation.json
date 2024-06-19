@@ -1,0 +1,30 @@
+{
+    "deployment": {
+        "minutes": 0,
+        "pingdatapoints": 500,
+        "sampleperiod": 100.00,
+        "scanenabled": true,
+        "downwardenabled": true,
+        "orientationenabled": true
+    }, 
+    "downward": {
+        "range": 4,
+        "frequency": 220,
+        "logf": 20,
+        "startgain": 20,
+        "trainangle": 180,
+        "absorption": 2.01,
+        "pulselength": 150
+    }, 
+    "scan": {
+        "range": 12,
+        "frequency": 245,
+        "logf": 20,
+        "startgain": 30,
+        "sectorwid": 180,
+        "trainangle": 90,
+        "step_size": 2.4,
+        "absorption": 1.80,
+        "pulselength": 280
+    }
+}

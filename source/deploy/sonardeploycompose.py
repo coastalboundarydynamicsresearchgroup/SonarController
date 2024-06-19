@@ -118,6 +118,14 @@ class SonarDeployCompose:
     else:
       emit_status('Error during scan(' + str(self.runstate.configurationName) + ': ' + result['message'])
 
+  def orientationStep(self, deployer):
+    emit_status('')
+    emit_status('Orientation(' + self.runstate.configurationName + ')')
+    result = deployer.doSonarOrientation()
+    if result['success']:
+      emit_status('Orientation(' + self.runstate.configurationName + ') completed with ' + str(result['response']['count']) + ' steps')
+    else:
+      emit_status('Error during orientation(' + str(self.runstate.configurationName) + ': ' + result['message'])
 
 
   def compose_and_deploy(self, sonar):
@@ -127,6 +135,7 @@ class SonarDeployCompose:
     samplePeriod = self.runstate.configuration['deployment']['sampleperiod'] * 60
     scanEnabled = self.runstate.configuration['deployment']['scanenabled']
     downwardEnabled = self.runstate.configuration['deployment']['downwardenabled']
+    orientationEnabled = self.runstate.configuration['deployment']['orientationenabled']
 
     emit_status('Composing deployment with scan ' + ('enabled' if scanEnabled else 'disabled') + ', downward ' + ('enabled' if downwardEnabled else 'disabled') + ' and period ' + str(samplePeriod) + ' seconds', logToProgress=True, options={'deployrunning':True})
 
@@ -139,6 +148,8 @@ class SonarDeployCompose:
         self.scanStep(deployer)
       if downwardEnabled:
         self.downwardStep(deployer)
+      if orientationEnabled:
+        self.orientationStep(deployer)
 
       end_timestamp = time.time()
       duration = end_timestamp - start_timestamp

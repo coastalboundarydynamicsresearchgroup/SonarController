@@ -62,7 +62,10 @@ class SonarCommChannel:
       self.reorient_head_for_first_scan(parameters, onStatus)
 
     onStatus('Executing with filepath=' + filepath + ", and loop_count=" + str(loop_count))
-    command = self.build_switch_command_from_parameters(parameters, onStatus)
+    if 'orientation' in parameters and parameters['orientation']:
+      command = self.create_orientation_switch_command()
+    else:
+      command = self.build_switch_command_from_parameters(parameters, onStatus)
 
     # The primary loop terminator here is when our head angle returns to self.ending_head_position.
     # However, we will guard against some coding error or comms error causing this loop to never
@@ -71,8 +74,10 @@ class SonarCommChannel:
     loop_sentry = 1 if loop_count == 1 else loop_count + 2
     while ending_head_pos_count < 2 and (loop_sentry > 0):
       response = self.transact_switch_response(command, filepath, onStatus)
-      if self.ending_head_position and (response['headpos'] == self.ending_head_position):
-        ending_head_pos_count += 1
+
+      if 'headpos' in response:
+        if self.ending_head_position and (response['headpos'] == self.ending_head_position):
+          ending_head_pos_count += 1
 
       if not self.runstate.is_running():
         print('Sonar comm loop terminated because we are not running')
@@ -161,11 +166,12 @@ class SonarCommChannel:
         response["header"] = sonar_data[0:3].decode('utf-8')
         response["headid"] = sonar_data[3]
         response["serialstatus"] = sonar_data[4]
-        response["stepdirection"] = 1 if sonar_data[6] & 64 else 0
-        response["headpos"] = (((sonar_data[6] & 63) << 7 | (sonar_data[5] & 127)) - 600) * 0.3
-        response["comment"] = "Computing head position " + str(response["headpos"]) + " from byte 5=" + str(sonar_data[5]) + " and 6=" + str(sonar_data[6])
-        response["range"] = sonar_data[7]
-        response["profilerange"] = sonar_data[9] << 7 | sonar_data[8] & 127
+        if response["header"] != 'IOX':
+          response["stepdirection"] = 1 if sonar_data[6] & 64 else 0
+          response["headpos"] = (((sonar_data[6] & 63) << 7 | (sonar_data[5] & 127)) - 600) * 0.3
+          response["comment"] = "Computing head position " + str(response["headpos"]) + " from byte 5=" + str(sonar_data[5]) + " and 6=" + str(sonar_data[6])
+          response["range"] = sonar_data[7]
+          response["profilerange"] = sonar_data[9] << 7 | sonar_data[8] & 127
         response["databytes"] = sonar_data[11] << 7 | sonar_data[10] & 127
         data = ""
         for val in sonar_data[12:-1]:
@@ -234,6 +240,47 @@ class SonarCommChannel:
 
     command[24] = 1                          # Switch delay 0-255 in 2-msec increments - Do not use value of 253 (\fd)
     command[25] = frequency                  # 0-200 in (kHz - 675)/5 + 100 - 175kHz-1175kHz in 5kHz increments
+
+    # Termination byte
+    command[26] = bytearray.fromhex('fd')[0]
+
+    return command
+
+
+  def create_orientation_switch_command(self):
+    command=bytearray(27)
+
+    # Switch data header
+    command[0] = bytearray.fromhex('fe')[0]
+    command[1] = bytearray.fromhex('44')[0]
+
+    command[2] = 16 + 8                      # Head ID
+    command[3] = 0                           # Reserved, must be 0
+    command[4] = 0                           # Reserved, must be 0
+    command[5] = 0                           # Reserved, must be 0
+    command[6] = 0                           # Reserved, must be 0
+    command[7] = 0                           # Reserved, must be 0
+
+    command[8] = 0                           # Reserved, must be 0
+    command[9] = 0                           # Reserved, must be 0
+    command[10] = 0                          # Reserved, must be 0
+    command[11] = 0                          # Reserved, must be 0
+    command[12] = 0                          # Reserved, must be 0
+    command[13] = 0                          # Reserved, must be 0
+    command[14] = 0                          # Reserved, must be 0
+    command[15] = 0                          # Reserved, must be 0
+
+    command[16] = 0                          # Reserved, must be 0
+    command[17] = 0                          # Reserved, must be 0
+    command[18] = 0                          # Reserved, must be 0
+    command[19] = 0                          # Reserved, must be 0
+    command[20] = 0                          # Operation: 0 (normal), 1 (cal data), 2 (cal mem), 3 (write cal mem) 0x21 reset gyro to zero
+    command[21] = 0                          # Cal memory page; 0 (operation = normal), page number (operation != 0)
+    command[22] = 0                          # Reserved, must be 0
+    command[23] = 0                          # Reserved, must be 0
+
+    command[24] = 0                          # Switch delay 0-255 in 2-msec increments - Do not use value of 253 (\fd)
+    command[25] = 0                          # Reserved, must be 0
 
     # Termination byte
     command[26] = bytearray.fromhex('fd')[0]

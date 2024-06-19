@@ -8,6 +8,7 @@ const DistributeConfiguration = (configuration) => {
   document.getElementById("sampleperiod").value = configuration.deployment.sampleperiod;
   document.getElementById("scancheckbox").checked = configuration.deployment.scanenabled;
   document.getElementById("downwardcheckbox").checked = configuration.deployment.downwardenabled;
+  document.getElementById("orientationcheckbox").checked = configuration.deployment.orientationenabled;
 
   document.getElementById("downwardrange").value = configuration.downward.range;
   document.getElementById("downwardfrequency").value = configuration.downward.frequency;
@@ -108,6 +109,7 @@ const WriteConfiguration = (onDoneHandler) => {
   deployment.sampleperiod = ValidateFloatField("sampleperiod", 0.0, 1000000.0, 0.01);
   deployment.scanenabled = ValidateCheckField("scancheckbox");
   deployment.downwardenabled = ValidateCheckField("downwardcheckbox");
+  deployment.orientationenabled = ValidateCheckField("orientationcheckbox");
 
   var downward = {};
   downward.range = ValidateIntField("downwardrange", 1, 200);

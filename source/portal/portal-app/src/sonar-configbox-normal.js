@@ -68,6 +68,7 @@ const SonarConfigBoxNormal = ({onChangeFunc}) => {
               <SonarConfigField fieldname="sampleperiod" fieldTitle="Minutes between Samples" initialValue="0" onChangeFunc={onChangeFunc}></SonarConfigField>
               <SonarCheckBox fieldname="scancheckbox" fieldTitle="Scan" initialValue="scan" onChangeFunc={onChangeFunc}></SonarCheckBox>
               <SonarCheckBox fieldname="downwardcheckbox" fieldTitle="Downward" initialValue="downward" onChangeFunc={onChangeFunc}></SonarCheckBox>
+              <SonarCheckBox fieldname="orientationcheckbox" fieldTitle="Orientation" initialValue="downward" onChangeFunc={onChangeFunc}></SonarCheckBox>
             </div>
             <div className="configurationrow">
               <SonarProgressField fieldname="progress" fieldTitle="Progress" initialValue=""></SonarProgressField>

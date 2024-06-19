@@ -11,6 +11,7 @@ class SonarDeploy:
         self.onStatus = onStatus
         self.scanSequence = 1
         self.downwardSequence = 1
+        self.orientationSequence = 1
         print('Creating SonarDeploy for configuration ' + self.configurationName)
 
 
@@ -44,6 +45,20 @@ class SonarDeploy:
         self.doSonarIndex('scan', file)
         response = self.sonar.execute(sonarParameters, self.sonarFilePath + file, self.onStatus, step_count)
         self.scanSequence += 1
+
+        result = {}
+        result['success'] = True
+        result['message'] = ''
+        result['response'] = response
+        return result
+
+    def doSonarOrientation(self):
+        sonarParameters = self.buildSonarOrientationParameters()
+        self.onStatus('Performing sonar Orientation step ', logToFile=False, logToProgress=True, options={'count':self.scanSequence})
+        file = 'sonarOrientation' + str(self.orientationSequence) + '.dat'
+        self.doSonarIndex('orientation', file)
+        response = self.sonar.execute(sonarParameters, self.sonarFilePath + file, self.onStatus)
+        self.orientationSequence += 1
 
         result = {}
         result['success'] = True
@@ -123,3 +138,13 @@ class SonarDeploy:
 
         return parameters
     
+    def buildSonarOrientationParameters(self):
+        # Always constant.
+        orientation = True
+      
+        parameters = {
+            'orientation': orientation
+        }
+
+        return parameters
+
