@@ -59,111 +59,22 @@ In raspi-config, use the keyboard arrow keys and <enter> key to:
 
 Exit raspi-config, and allow it to reboot.
 
-### Install Packages
-
 The following instructions will be done by keyboard commands at the command line interface.  You can either use the GUI and launch a terminal to work in or remote in from another computer using SSH.
 
+### Create the sonar881 user
 
+All processing of the Sonar 881 will be done with this user's credentials.  The source code and data files will be owned by it.
 
-Connect the power supply that came with the SBC to the wall and the USB C connector.  This is for setup and development only.  When deployed, the USB C connector will be powered with a buck converter running off battery power.
+Create the user:
+`admin@sonar10:~ $ sudo adduser sonar881`
 
-Depress the power button (tiny stud near the HDMI connector) momentarily.
+Make the password `881`.
 
-Observe the LEDs near the USB end of the SBC blink occasionally during boot.
+Also, add the sonar881 user to some groups.  This will allow it to use devices like the serial ports and I2C, as well as give it access to sudo.
 
-The LattePanda logo should come on the monitor for a few seconds.
+`admin@sonar10:~ $ sudo usermod -a -G adm,dialout,cdrom,sudo,audio,video,plugdev,games,users,netdev,input,spi,i2c,gpio sonar881`
 
-The SBC should boot to Windows 10 Professional
-
-### Enable Boot on Power Up
-
-If Windows is running, reboot.  If not, power-up the SBC, remembering to press the power button to start booting.
-
-During the boot process, press the Delete to enter the BIOS.
-
-On the Advanced tab, scroll down to Power management, and press Enter.  Find Boot on AC, and turn it on.
-
-Finish booting, then shut down.  Test by removing USB power from the SBC, then re-attaching the USB power connector.  You should boot directly into Windows.
-
-### Install Linux from USB drive
-
-Obtain the ISO image for the Linux distro.  I used Ubuntu 22.04 LTS Server from August 3, 2023.  I have burned the ISO to a USB drive which should be included.
-
-If you do not have my USB drive, or wish to use a different or newer Linux distro, download and use Balena Etcher or some other tool to burn the image.  
--  Note that simply copying the ISO file to a pre-formatted thumb drive will not work. 
--  The USB drive needs to have at least a capacity equal to the size of the ISO image.
--  Burning the image completely erases all other information on the drive.
--  Ubuntu comes with a tool called ‘Startup Disk Creator’ that works like Balena Etcher for this purpose, if you are creating the installation USB drive on an existing Ubuntu system.
-
-Using either my USB drive or your newly-created one, insert the USB drive into one of the USB slots on the LattePanda 3 Delta SBC.  If windows is running, you may see a popup that says you need to format the drive in order to use it. ***don’t***.  Just dismiss the dialog.
-
-Reboot the SBC.  While rebooting, press Delete to enter the BIOS.  On the Boot tab:
-- Change the boot type from UEFI to Legacy
-- Change the boot order so that first boot is from the USB drive.  Exit the BIOS to boot from the USB drive.
-  - NOTE that you will need an Ethernet cable connected, with Internet access.
-
-Booting from USB may be slower than other methods, so be patient.  You should see a long list of notes as Linux talks to itself during the boot process.
-
-Most of the first configuration questions about keyboard and such are obvious, just press Enter to accept them.  However, I had an issue when I got to a page requesting a network adapter to use during installation.  Apparently, my DHCP was not acceptable to the boot program, and it kept resetting the network adapter, showing an IP address, then rapidly resetting to ‘Disabled’.  Rinse, repeat.  I found that I could use the arrow keys to put the cursor on the adapter, and get a side menu, allowing me to configure the network by hand.  For my network, I used an unused IP address: 
--  Net mask -> 192.168.1.0/24  
--  IP address -> 192.168.1.57  
--  Gateway -> 192.168.1.1  
--  DNS servers -> 1.1.1.1,8.8.8.8  
--  Search URL -> google.com
-  - Note that for your network, none of the above manual configuration may be necessary, if the network adapter acquires an IP address reliably.  Also, the example Net mask, IP address, and Gateway above were appropriate for my network, but may not be for yours.  If unsure, you may be able to check with a Windows, Mac, or Linux computer that is properly working on your network.  Use the settings from that, but change the IP address to an unused one.
-
-The installer then used the network connection to download some stuff.
-
-The installer found the LattePanda built-in EMMC storage, but the M.2 drive was not mounted.  So, it offered to install Linux on the whole drive where Windows is currently installed (overwriting Windows).  Which is what I wanted.  I just pressed Enter to allow this.
-
-At this point, you will be presented with a screen asking for your name, the server name, a username, and password (confirmed).  Here is what I suggest using:
--  Your name: &lt;your name&gt;
--  Your server’s name: 881controller&lt;N&gt;  where &lt;N&gt; is 1,2,3, etc, making unique names.
--  Username: sonar881
--  Password: 881
-
-On the next screen, don’t upgrade to Ubuntu Pro.
-
-On the screen asking about SSH, enable SSH, but do not import any keys.
-
-On the screen offering different server environments, choose Docker.
-
-When installation is done, select Done.  It may fail to eject a CD, then ask you to remove your USB drive and press Enter.  Do that.
-
-Reboot the SBC.  While rebooting, press Delete to enter the BIOS.  On the Boot tab:
-- Change the boot type back to UEFI from Legacy
-- Change the boot order so that first boot is from the Hard drive, which in UEFI mode should show that it boots to Linux.  Exit the BIOS to boot from the internal EMMC SSD.
-
-The SBC should reboot into Linux.  
-
-### Format the NVMe SSD storage and make a filesystem
-
-Fresh out of the box, the M.2 NVMe drive will be initialized, with no partitions.  Our first job is to create a partition.  If you are re-using an M.2 drive for some reason, this step may already be done.
-
-Make the partition on the M.2 NVMe drive. 
-
-Execute:
-`lsblk`
-
-
-![lsblk command](lsblkNVMeSSD.jpg)
-
-Most likely, your NVMe drive will show up like mine: `/dev/nvme0n1`
-
-To make the partition, execute (using the drive path found from lsblk):
-
-`sudo fdisk /dev/nvme0n1`
-- Choose `n` to create a new partition.
-- At the prompt, choose `p` for a primary partition.
-- Select `1`.
-- Other questions will follow, just use defaults.
-- When back at the main command, choose `w` to write the data to the disk.
-
-Add a filesystem to the partition.  I am choosing `ntfs` since it will provide portability to directly read and write to the SSD if it is removed from this SBC and put into a Windows computer.  Other formats might be preferrable in a strictly-linux environment.
-
-Use lsblk again to see the name of the partition you just created.  It is probably named `/dev/nvme0n1p1`.  Make the filesystem with this command.
-
-`sudo mkfs -t ntfs /dev/nvme0n1p1`
+### Install Packages
 
 
 ### Permanently mount the NVMe M.2 SSD
