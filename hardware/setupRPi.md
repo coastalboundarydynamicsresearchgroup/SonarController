@@ -40,6 +40,31 @@ Connect an HDMI monitor, wired Ethernet connection, and USB keyboard and mouse. 
 
 ### Power up
 
+During first boot, ensure that the Raspberry Pi has an Ethernet cable plugged in that provides access to the Internet.
+
+Follow the instructions for first boot, and when prompted:
+- Make a note of the Raspberry Pi's IP address
+- Create the first user 'admin' with password 'admin'.
+- Skip connecting to a Wifi network.
+- Select Chromium as the default browser.
+- Let the software update itself if needed.
+
+After the software updates and reboots (reboot manually if needed), use the GUI to launch a console and type
+`sudo raspi-config`
+
+In raspi-config, use the keyboard arrow keys and <enter> key to:
+- System Settings -> Hostname  set to 'SonarXX' where 'XX' is the 2-digit id number of the sonary controller.  For example, 'sonar10'.
+- Interfaces -> SSH  enable SSH access
+- Interfaces -> I2C  enable the Arm I2C interface
+
+Exit raspi-config, and allow it to reboot.
+
+### Install Packages
+
+The following instructions will be done by keyboard commands at the command line interface.  You can either use the GUI and launch a terminal to work in or remote in from another computer using SSH.
+
+
+
 Connect the power supply that came with the SBC to the wall and the USB C connector.  This is for setup and development only.  When deployed, the USB C connector will be powered with a buck converter running off battery power.
 
 Depress the power button (tiny stud near the HDMI connector) momentarily.
