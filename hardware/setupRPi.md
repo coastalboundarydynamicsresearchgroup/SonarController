@@ -77,20 +77,26 @@ Also, add the sonar881 user to some groups.  This will allow it to use devices l
 ### Install Packages
 
 
-### Permanently mount the NVMe M.2 SSD
+### Permanently mount the USB thumb drive
 
 - Log in as `sonar881` (password `881`).
 - Create a mount point.  This will be used in `fstab` below, and will be where you see the data for this drive:
 
-`sudo mkdir /mnt/m2`
+`sudo mkdir /mnt/data`
 
 - At the command prompt, enter:
 
 `sudo blkid`
 
-![blkid command](blkid_command.png)
+![blkid command](blkid_command_rpi.png)
 
-- Look for the partition you created above, probably `/dev/nvme0n1p1` or `/dev/nvme0n1p2`.  Somewhere in the line for this partition, should be `UUID=”32BA153FBA1500D1”`.  Your UUID will of course be different, but will be some long string of Hex digits.  Highlight the UUID (less quotation marks) and copy.
+- Look for the partition you created above, probably `/dev/sda1` or `/dev/sdb1`.  Somewhere in the line for this partition, should be `UUID=”4DEC-8563”`.  Your UUID will of course be different, but will be some long string of Hex digits.  Highlight the UUID (less quotation marks) and copy.
+
+- Capture the UID and GID of the sonar881 user with the command:
+
+`id`
+
+Since the `admin` user was created at installation, and the `sonar881` user was second, it is likely that both UID and GID of `sonar881` will be 1001.
 
 - Now, edit `/etc/fstab`.  To do this, enter:
 
@@ -100,71 +106,67 @@ Also, add the sonar881 user to some groups.  This will allow it to use devices l
 
 At the bottom, enter a line like
 
-`UUID=32BA153FBA1500D1 /mnt/m2       ntfs-3g   auto,users,uid=1000,gid=1000,dmask=027,fmask=137,utf8  0  0`
+`UUID=4DEC-8563 /mnt/data       vfat   auto,users,uid=1001,gid=1001,dmask=027,fmask=137,utf8  0  0`
 
 - Note that the string of hex digits following ‘UUID=’ must be the UUID you captured from the blkid command above.
+- Use the uid and gid you captured above.
 - Exit the editor, saving the file, and test it with
 
 `sudo mount -a`
 
-- Issuing a new lsblk command should show the mount point `/mnt/m2` for the partition you mounted, and you should see a file or two at `/mnt/m2`.
+- Issuing a new lsblk command should show the mount point `/mnt/data` for the partition you mounted, and you should see a file or two at `/mnt/data`.
 
-![lsblk command](lsblk_command.png)
+![lsblk command](lsblk_command_rpi.png)
 
 -Try creating a subfolder and writing a file.
 
 ### Enable Wifi hotspot
 
+This section summarizes a longer tutorial at [raspberrypi.com](https://www.raspberrypi.com/tutorials/host-a-hotel-wifi-hotspot/). For more detail, read the section `Create hotspot network`.
+
+
 - Log in as `sonar881` (password `881`).
 - At the command prompt, enter:
 
-`sudo apt install network-manager`
-
-`[sudo] password for sonar881: 881`
-
-- After installation is complete, enter
-
 `nmcli d`
 
-- You should receive several lines, one of which will indicate that `wlo1`, type `wifi`, is disconnected.  The point of this line is to confirm the name of the wifi network connection (`wlo1` in the example above).  If yours is different, remember to insert it into the commands below).
+- You should receive several lines, one of which will indicate that `wlan0`, type `wifi`, is disconnected.  The point of this line is to confirm the name of the wifi network connection (`wlan0` in the example above).  If yours is different, remember to insert it into the commands below.
 
 - Enable the wifi hotspot with
 
-`sudo nmcli d wifi hotspot ifname wlo1 ssid Sonar1 password Sonar881`
+`sudo nmcli device wifi hotspot ssid Sonar10 password Sonar881 ifname wlan0`
 
 - Re-entering `nmcli d` command should now show the wifi hotspot connected:
 
-![nmcli d command](nmcli_command.png)
+![nmcli d command](nmcli_command_rpi.png)
 
 You should also see a hotspot called Sonar881 visible to your laptop, phone, or tablet.  Don't connect to it yet; we are not done.
 
-Log into the SBC and change to the network-manager directory that controls the hotspot:
+Our next step is to make the wifi hotspot available immediately after every reboot.  To do this, we need to change two settings for the hotspot connection from their defaults: `autoconnect` and `autoconnect-priority`.
 
-`cd /etc/NetworkManager/system-connections`
+First, we will identify our network connection's UUID.  We will use this long string of hex characters to identify the connection to modify.
 
-`ls -al`
+Enter:
 
-When you instructed network-manager to create a hotspot above, it wrote a file in this directory called `Hotspot.nmconnection`.  Edit this file:
+`nmcli connection`
 
-`sudo nano Hotspot.nmconnection`
+![nmcli connection command](nmcli_connection_command_rpi.png)
 
-Edit or create the `[ipv4]` section as needed so it looks like this:
+The highlighted UUID belongs to the `wlan0` connection for this particular raspberry pi.  Your UUID will be different, so be sure to do this step and copy the UUID somewhere.
 
-![Hotspot.nmconnection edit](Hotspot.nmconnection.png)
+Now, using the UUID, we enter (again, be sure to replace the UUID shown with your own):
+
+`sudo nmcli connection modify 2b106e5b-a621-4482-bc7c-440b069e2f31 connection.autoconnect yes connection.autoconnect-priority 100`
+
+After modifying these two settings for the `wlan0` connection, we confirm it using:
+
+`nmcli connection show 2b106e5b-a621-4482-bc7c-440b069e2f31`
+
+![nmcli connection show command](nmcli_connection_show_rpi.png)
+
+Note that the command above resuls in a *very* long list of parameters, and only the area surrounding the two of interest are shown.  You may need to search around a bit to find these two lines.
 
 
-The third digit in the IP addresses on the `address1` line should be unique for each controller SBC.  This will allow you to run more than one in the same local area without conflict.  Example: `10.42.1.1, 10.42.2.1, 10.42.3.1`, etc.
-
-To make the above change take effect, restart the network-manager service:
-
-`sudo service NetworkManager restart`
-
-and then re-issue the manual hotspot command:
-
-`sudo nmcli d wifi hotspot ifname wlo1 ssid Sonar1 password Sonar881`
-
-
-The above procedure is a proof of concept, not a permanent solution, because it requires you to enable the wifi hotspot manually after every boot.  To enable the wifi hotspot automatically on every boot, we will create a cron job that runs on startup.  The cron job will run a shell script, so we need to provide that as well.
 
 - Note that the script files required for several steps come from the git repository, which can be obtained online from github.  To set this up, create a directory for repositories called github:
 
