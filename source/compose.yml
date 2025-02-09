@@ -1,6 +1,7 @@
 services:
   sonar-backend:
     container_name: sonar-backend
+    restart: unless-stopped
     build: ./backend/
     image: "louisross/sonar-backend:1.1"
     tty: true
@@ -10,9 +11,10 @@ services:
     volumes:
       - "./backend:/usr/src/app"
       - "./configuration/:/configuration"
-      - "/sonar/:/sonar"
+      - "/mnt/data/:/sonar"
   sonar-portal:
     container_name: sonar-portal
+    restart: unless-stopped
     build: "./portal"
     image: "louisross/portal:1.1"
     tty: true
@@ -22,11 +24,12 @@ services:
     volumes:
       - "./portal/:/app"
       - "./configuration/:/app/portal-app/src/configuration"
-      - "/sonar/:/app/portal-app/public/sonar"
+      - "/mnt/data/:/app/portal-app/public/sonar"
     depends_on:
       - sonar-backend
   sonar-deploy:
     container_name: sonar-deploy
+    restart: unless-stopped
     build: "./deploy"
     image: "louisross/sonar-deploy:1.1"
     devices:
@@ -36,7 +39,7 @@ services:
     volumes:
       - "./deploy:/usr/src/app"
       - "./configuration/:/configuration"
-      - "/sonar/:/sonar"
+      - "/mnt/data/:/sonar"
     depends_on:
       - sonar-backend
 

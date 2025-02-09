@@ -7,7 +7,7 @@ docker container run \
 --device /dev/ttyUSB0 \
 -v "$(pwd)":/usr/src/app \
 -v "$(pwd)/../configuration/:/configuration" \
--v "/mnt/m2/sonar/:/sonar" \
+-v "/mnt/data/:/sonar" \
 -p 5000:5000 \
 louisross/sonar-backend:1.0 \
 bash
