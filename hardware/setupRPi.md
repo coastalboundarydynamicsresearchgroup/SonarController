@@ -79,10 +79,12 @@ Also, add the sonar881 user to some groups.  This will allow it to use devices l
 
 ### Permanently mount the USB thumb drive
 
+Note that this procedure permanently binds the sonar881 controller to a specific thumb drive.  You can't just swap thumb drives later.  To change to a different thumb drive, re-run this section with the new thumb drive plugged in.
+
 - Log in as `sonar881` (password `881`).
 - Create a mount point.  This will be used in `fstab` below, and will be where you see the data for this drive:
 
-`sudo mkdir /mnt/data`
+`sudo mkdir /mnt/sonar`
 
 - At the command prompt, enter:
 
@@ -114,7 +116,7 @@ At the bottom, enter a line like
 
 `sudo mount -a`
 
-- Issuing a new lsblk command should show the mount point `/mnt/data` for the partition you mounted, and you should see a file or two at `/mnt/data`.
+- Issuing a new lsblk command should show the mount point `/mnt/sonar` for the partition you mounted, and you should see a file or two at `/mnt/sonar`.
 
 ![lsblk command](lsblk_command_rpi.png)
 
@@ -140,7 +142,7 @@ This section summarizes a longer tutorial at [raspberrypi.com](https://www.raspb
 
 ![nmcli d command](nmcli_command_rpi.png)
 
-You should also see a hotspot called Sonar881 visible to your laptop, phone, or tablet.  Don't connect to it yet; we are not done.
+You should also see a hotspot called Sonar10 visible to your laptop, phone, or tablet.  Don't connect to it yet; we are not done.
 
 Our next step is to make the wifi hotspot available immediately after every reboot.  To do this, we need to change two settings for the hotspot connection from their defaults: `autoconnect` and `autoconnect-priority`.
 
@@ -252,36 +254,6 @@ Note the startup command for the `deploy` container is different from the others
 
 
 
-### Clean logs on boot
-The flash drive storage on the SBC is not huge (about 50 GB), and after a few weeks of use, can be completely filled with log files.  These files are normal Linux activity, but not needed for the sonar controller, and will render it useless if allowed to fill up.
-
-To address this problem, we install a script that runs every time the computer boots that will delete all log files.
-
-`cd bootfiles`
-
-`scp clear-syslogs.sh sonar881@sonarcontroller1:/home/sonar881/clear-syslogs.sh`
-
-- Log into the SBC and install in the correct directory:
-
-`sudo cp clear-syslogs.sh /usr/local/bin`
-
-`chmod 744 /usr/local/bin/clear-syslogs.sh`
-
-- Now, let's create the cron job to run the script as admin (don't forget the `sudo` here):
-
-`sudo crontab -e`
-
-- When nano starts with the cron job table, use the arrow keys to scroll to the bottom and enter:
-
-`@reboot /usr/local/bin/clear-syslogs.sh`
-
-- Use ctrl-X to exit nano, indicating that you want to save.  
-
-The `sudo` version of crontab should now look like this:
-
-![crontab](crontab1.png)
-
-
 ### Start Docker Containers on Boot
 
 Note that I had the Perplexity AI write these instructions.  They seem to work, so here they are:
@@ -317,6 +289,36 @@ Finally, enable and start the service.
 `sudo systemctl enable docker-compose-sonar.service`
 
 `sudo systemctl start docker-compose-sonar.service`
+
+
+### Clean logs on boot
+The flash drive storage on the SBC is not huge (about 50 GB), and after a few weeks of use, can be completely filled with log files.  These files are normal Linux activity, but not needed for the sonar controller, and will render it useless if allowed to fill up.
+
+To address this problem, we install a script that runs every time the computer boots that will delete all log files.
+
+`cd bootfiles`
+
+`scp clear-syslogs.sh sonar881@sonarcontroller1:/home/sonar881/clear-syslogs.sh`
+
+- Log into the SBC and install in the correct directory:
+
+`sudo cp clear-syslogs.sh /usr/local/bin`
+
+`chmod 744 /usr/local/bin/clear-syslogs.sh`
+
+- Now, let's create the cron job to run the script as admin (don't forget the `sudo` here):
+
+`sudo crontab -e`
+
+- When nano starts with the cron job table, use the arrow keys to scroll to the bottom and enter:
+
+`@reboot /usr/local/bin/clear-syslogs.sh`
+
+- Use ctrl-X to exit nano, indicating that you want to save.  
+
+The `sudo` version of crontab should now look like this:
+
+![crontab](crontab1.png)
 
 
 ### Check for Periodic Shutdown
