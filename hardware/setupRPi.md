@@ -16,7 +16,7 @@ The sonar control computer hardware consists of:
 ## Unboxing and Assembly
 
 <figure>
-  <img src="Sonar881_RPi4B.jpg" width="400" alt="Raspberry Pi with thumb drive and RS-485 adapter">
+  <img src="Sonar881_RPi4B.jpg" width="600" alt="Raspberry Pi with thumb drive and RS-485 adapter">
   <figcaption>The Raspberry Pi 4B with USB thumb drive and RS-485 adapter</figcaption>
 </figure>
 
