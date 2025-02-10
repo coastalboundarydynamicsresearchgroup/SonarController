@@ -1,10 +1,12 @@
 # Sonar Controller Computer for Oregon State University Ice Ocean 881a
 
-The 881a sonar controller for the Oregon State Ice Ocean group is a pressure vessel with self-contained battery power and a control computer with a communication port appropriate to talk to the Imagenex 881a sonar.
+The 881a sonar controller for the Oregon State University Ice Ocean group is a pressure vessel with self-contained battery power and a control computer with a communication port appropriate to talk to the Imagenex 881a sonar.
 
 This document focuses on the unboxing and setup of the control computer.  Issues of pressure vessel selection, mounting, battery power, etc, are left for other documents.
 
 ## Components
+***TODO - Add Seeed RTC module when it comes***
+
 The sonar control computer hardware consists of:
 - [Raspberry Pi 4B single-board computer](https://www.raspberrypi.com/products/raspberry-pi-4-model-b/)
 - [Generic USB 3.0 thumb drive](https://www.amazon.com/gp/aw/d/B083ZLJ5MG/)
@@ -22,7 +24,7 @@ The Raspberry Pi single-board computer is shown with components installed for us
 
 - Power is being provided via USB-C on the lower right of the board.
 - The board is booting and running its O/S and programs from the micro-SD card, the edge of which can be seen peeking out of the bottom edge of the board.
-- The Ethernet wire used for development is can be seen at the top left of the board.
+- The Ethernet wire used for development can be seen at the top left of the board.
 - The RS-485 converter is connected to a USB slot via a short extension cord, since it is too wide to plug directly in.
 - The USB thumb drive is marginally visible in the USB slot under the extension cord.
 
@@ -53,7 +55,7 @@ After the software updates and reboots (reboot manually if needed), use the GUI 
 `sudo raspi-config`
 
 In raspi-config, use the keyboard arrow keys and <enter> key to:
-- System Settings -> Hostname  set to 'SonarXX' where 'XX' is the 2-digit id number of the sonary controller.  For example, 'sonar10'.
+- System Settings -> Hostname  set to 'SonarXX' where 'XX' is the 2-digit id number of the sonar controller.  For example, 'sonar10'.
 - Interfaces -> SSH  enable SSH access
 - Interfaces -> I2C  enable the Arm I2C interface
 
@@ -73,8 +75,6 @@ Make the password `881`.
 Also, add the sonar881 user to some groups.  This will allow it to use devices like the serial ports and I2C, as well as give it access to sudo.
 
 `admin@sonar10:~ $ sudo usermod -a -G adm,dialout,cdrom,sudo,audio,video,plugdev,games,users,netdev,input,spi,i2c,gpio sonar881`
-
-### Install Packages
 
 
 ### Permanently mount the USB thumb drive
@@ -167,11 +167,9 @@ After modifying these two settings for the `wlan0` connection, we confirm it usi
 Note that the command above resuls in a *very* long list of parameters, and only the area surrounding the two of interest are shown.  You may need to search around a bit to find these two lines.
 
 
-
-- Note that the script files required for several steps come from the git repository, which can be obtained online from github.  To set this up, create a directory for repositories called github:
-
-
 ### Download the Sonar881 code
+Note that files needed for several steps come from the git repository, which can be obtained online from github.  To set this up, create a directory for repositories called coastalboundary:
+
 `mkdir ~/coastalboundary`
 
 Now, change into the `coastalboundary` directory and clone the repository
@@ -184,12 +182,12 @@ The steps below that reference repository directories are now referenced as if y
 
 
 ### Create a configuraton file
-In the folder source/configuration are several configuration files, used as templates for your own needs.  The `configuration10.json` file is appropriate for Raspberry Pi deployments, but may need to be modified with a different number from 10.
+In the folder source/configuration are several configuration files, used as templates for your own needs.  The `configuration10.json` file is appropriate for Raspberry Pi deployments, but may need to be modified.
 
 Make a copy of your selected and edited configuration file and call it `configuration.json`.
 
-Also, sonar executable configurations will be placed at `/mnt/data/configuration/`.  Make that folder now with:
-`mkdir /mnt/data/configuration`
+Also, sonar executable configurations will be placed at `/mnt/sonar/configuration/`.  Make that folder now with:
+`mkdir /mnt/sonar/configuration`
 
 
 ### Install the Docker container system
@@ -231,23 +229,23 @@ However, there is some preparation required to get the docker images ready to ru
 
 Do the above steps for each service.  The services are listed in the `compose.yml` file in the `source` directory.  Look at the `build:` attribute of each service to find the working directory for that service.
 
-Note the startup command for the `deploy` container is different from the others: `./deploy`.
+Note the startup command for the `deploy` container is different from the others: `python3 ./deploy`.
 
 1. Go to the working directory of the service.
 2. `./dockb`
 3. The above command will build the docker container v1.0 for the service.
 4. `./dock-start`
-5. The above command wil run the v1.0 container and provide a console connected to it.
+5. The above command will run the v1.0 container and provide a console connected to it.
 6. Once in the running container, see if all components were installed:
-7. `npm start`
+7. `npm start` or appropriate
 8. If an error occurs and you are taken back to the prompt, you need to install missing packages:
 9. `npm install`
 10. Run the app again:
-11. `npm start`
+11. `npm start` or appropriate
 12. When you have a running service, use another console, logged into the `sonar881` user:
 13. `docker ps`
 14. This command will show the running container.  Copy its 24-digit hex ID into the clipboard.  Also note the image name, as you will need to type it with the version changed to 1.1:
-15. docker commit <ID> louisross/<servicename>:1.1
+15. docker commit ***ID*** louisross/***servicename***:1.1
 16. Confirm that the new image was committed using:
 17. `docker image ls`
 18. On the original console, still running the patched v1.0 service, Ctrl-C and `exit`.  Then test the v1.1 service with `./dock`, and start with `npm start` or appropriate.
@@ -292,7 +290,7 @@ Note that I had the Perplexity AI write these instructions.  They seem to work, 
 
 - Create a systemd service file to run the Docker Compose setup:
 
-`sudo nano /etc/systemd/system/docker-compose-app.service`
+`sudo nano /etc/systemd/system/docker-compose-sonar.service`
 
 - Paste the following into the editor and save:
 ```
@@ -305,8 +303,8 @@ After=docker.service
 Type=oneshot
 RemainAfterExit=yes
 WorkingDirectory=/home/sonar881/coastalboundary/SonarController/source
-ExecStart=/usr/local/bin/docker-compose up -d
-ExecStop=/usr/local/bin/docker-compose down
+ExecStart=/usr/bin/docker compose up -d
+ExecStop=/usr/bin/docker compose down
 
 [Install]
 WantedBy=multi-user.target
@@ -314,19 +312,11 @@ WantedBy=multi-user.target
 
 If for some reason your git repository is not in `/home/sonar881/coastalboundary/SonarController`, be sure to supply the correct path. 
 
-![Contents of docker-compose-sonar.service](docker-compose-sonar-service.png)
-
 Finally, enable and start the service.
 
 `sudo systemctl enable docker-compose-sonar.service`
+
 `sudo systemctl start docker-compose-sonar.service`
-
-
-
-
-The `sudo` version of crontab should now look like this:
-
-![crontab](crontab-startconfig.png)
 
 
 ### Check for Periodic Shutdown

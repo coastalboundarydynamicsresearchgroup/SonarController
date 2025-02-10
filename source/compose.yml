@@ -11,7 +11,7 @@ services:
     volumes:
       - "./backend:/usr/src/app"
       - "./configuration/:/configuration"
-      - "/mnt/data/:/sonar"
+      - "/mnt/sonar/:/sonar"
   sonar-portal:
     container_name: sonar-portal
     restart: unless-stopped
@@ -24,7 +24,7 @@ services:
     volumes:
       - "./portal/:/app"
       - "./configuration/:/app/portal-app/src/configuration"
-      - "/mnt/data/:/app/portal-app/public/sonar"
+      - "/mnt/sonar/:/app/portal-app/public/sonar"
     depends_on:
       - sonar-backend
   sonar-deploy:
@@ -39,7 +39,7 @@ services:
     volumes:
       - "./deploy:/usr/src/app"
       - "./configuration/:/configuration"
-      - "/mnt/data/:/sonar"
+      - "/mnt/sonar/:/sonar"
     depends_on:
       - sonar-backend
 
