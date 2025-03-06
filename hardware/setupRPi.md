@@ -11,13 +11,14 @@ The sonar control computer hardware consists of:
 - [Raspberry Pi 4B single-board computer](https://www.raspberrypi.com/products/raspberry-pi-4-model-b/)
 - [Generic USB 3.0 thumb drive](https://www.amazon.com/gp/aw/d/B083ZLJ5MG/)
 - [Waveshare USB-to-RS485 converter](https://www.amazon.com/gp/aw/d/B081NBCJRS/)
+- [Seeed Studios DS1307 Real Time Clock](https://wiki.seeedstudio.com/Pi_RTC-DS1307/)
 
 
 ## Unboxing and Assembly
 
 <figure>
   <img src="Sonar881_RPi4B.jpg" width="600" alt="Raspberry Pi with thumb drive and RS-485 adapter">
-  <figcaption>The Raspberry Pi 4B with USB thumb drive and RS-485 adapter</figcaption>
+  <figcaption>The Raspberry Pi 4B with USB thumb drive, RS-485 adapter, and RTC module</figcaption>
 </figure>
 
 The Raspberry Pi single-board computer is shown with components installed for use as an Imagenex 881a sonar controller.  Note that it is connected to the Internet with a hard-wired Ethernet connection for development.  The Ethernet wire will be removed for deployment. Since Wifi network will be turned into a Wifi hot spot, Wifi is not available on this board as a route to the Internet.
@@ -27,6 +28,7 @@ The Raspberry Pi single-board computer is shown with components installed for us
 - The Ethernet wire used for development can be seen at the top left of the board.
 - The RS-485 converter is connected to a USB slot via a short extension cord, since it is too wide to plug directly in.
 - The USB thumb drive is marginally visible in the USB slot under the extension cord.
+- The Real Time Clock (RTC) module is plugged onto the GPIO connector in the lower left, with its battery showing.
 
 Note the best performance will be achieved using the two USB slots next to the Ethernet jack, since these are USB 3, which are higher speed than the two at the other corner of the board, which are USB 2.  These two USB 2 slots are perfect for a keyboard and mouse during development.
 
@@ -181,6 +183,31 @@ Now, change into the `coastalboundary` directory and clone the repository
 `git clone https://github.com/coastalboundarydynamicsresearchgroup/SonarController.git`
 
 The steps below that reference repository directories are now referenced as if you are starting in `~/coastalboundary/SonarController`.
+
+
+### Initialize the RTC code
+Note that these instructions assume you have mounted a Real-Time Clock module based on the R2C-protocol DS1307 chip.  One such board is available from [Seeed Studios](https://wiki.seeedstudio.com/Pi_RTC-DS1307/).  See the instructions for your RTC for mounting details.  The details for the Seeed board are available in the link.
+
+Assuming your repository is at `~/coastalboundary` as described above, do the following:
+
+`cd ~/coastalboundary/SonarController/bootfiles/rtc`
+
+`sudo sh initialize_rtc.sh`
+
+Enter the password `881` if requested.
+
+The shell file will do the following:
+- Copy the python programs for reading and writing to the RTC chip to /usr/local/bin/rtc.
+- Create a crontab entry to run as root at bootup to run set_time_from_rtc.py each time the Pi boots.
+- Initializes the RTC chip with the current time by running (now, not at boot) set_rtc_datetime.py.
+
+As long as the battery holds, the RTC chip should be able to provide the correct date and time to the Pi system each time it is booted.  
+
+If the battery is changed, you should run
+
+`python3 set_rtc_datetime.py`
+
+from the directory shown above.
 
 
 ### Create a configuraton file
