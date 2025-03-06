@@ -150,3 +150,4 @@ source/systemmonitor/__pycache__/hardwarecomm.cpython-310.pyc
 source/systemmonitor/__pycache__/monitor.cpython-310.pyc
 source/systemmonitor/__pycache__/hardwarecomm.cpython-312.pyc
 source/systemmonitor/__pycache__/hardwarecomm.cpython-311.pyc
+bootfiles/rtc/__pycache__/rtc_define.cpython-311.pyc
