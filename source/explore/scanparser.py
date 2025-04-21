@@ -4,12 +4,9 @@ from  parse881 import Parse881
 
 class ScanParser (Parse881):
     """
-    A class to parse scan data from a file.
+    Parse scan or downward data from an 881 file.
     """
     def __init__(self):
-        """
-        Initialize the ScanParser with the run path and orientation file name.
-        """
         self.scan_data = []
         self.scan_index = 1
 

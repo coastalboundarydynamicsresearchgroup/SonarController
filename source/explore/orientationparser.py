@@ -1,10 +1,8 @@
-import os
-
 from  parse881 import Parse881
 
 class OrientationParser (Parse881):
     """
-    A class to parse orientation data from a file.
+    Parse orientation data from an 881 orientation file.
     """
     def __init__(self):
         """

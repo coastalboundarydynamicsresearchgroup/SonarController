@@ -17,7 +17,6 @@ class Parse881:
 
 
     def defumigate(self, lowbyte, highbyte):
-        #return highbyte << 7 | lowbyte & 0x7f
         return (highbyte & 0x3f) << 7 | (lowbyte & 0x7f)
     
 
