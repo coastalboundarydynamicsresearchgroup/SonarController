@@ -33,7 +33,7 @@ services:
     build: "./deploy"
     image: "louisross/sonar-deploy:1.1"
     devices:
-      - "/dev/ttyUSB0:/dev/ttyUSB0"
+      - "/dev/SonarSerial:/dev/ttyUSB0"
     tty: true
     command: 'python3 deploy.py'
     volumes:

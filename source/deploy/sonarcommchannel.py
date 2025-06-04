@@ -12,17 +12,28 @@ class SonarCommChannel:
   def __init__(self, runstate):
     self.runstate = runstate
     self.ending_head_position = None
+    self.ser = None
+    self.valid = False
+    self.status = ""
 
   def __enter__(self):
-    self.ser = serial.Serial('/dev/ttyUSB0', baudrate=115200, bytesize=8, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
-    self.ser.timeout = 10 # Exprimentally determined, some commands require the head to slew.
-    self.ser.reset_output_buffer()
-    self.ser.reset_input_buffer()
+    try:
+      self.ser = serial.Serial('/dev/ttyUSB0', baudrate=115200, bytesize=8, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
+      self.ser.timeout = 10 # Exprimentally determined, some commands require the head to slew.
+      self.ser.reset_output_buffer()
+      self.ser.reset_input_buffer()
+      self.valid = True
+      self.status = 'Opened serial port /dev/ttyUSB0 successfully'
+    except Exception as e:
+      self.valid = False
+      self.status = f'Failed to open serial port /dev/ttyUSB0: {e}'
     time.sleep(1)
 
+    return self
 
   def __exit__(self, *args):
-    self.ser.close()
+    if self.ser:
+      self.ser.close()
 
   def reorient_head_for_first_scan(self, parameters, onStatus):
     """ On the first scan, we do a dummy ping, allowing the head to
@@ -132,6 +143,7 @@ class SonarCommChannel:
         response = self.handle_sonar_response(sonar_data, filepath, onStatus)
       else:
         response = self.make_dummy_response()
+        onStatus('No Response')
     except Exception:
       onStatus('Failure in serial transaction')
 

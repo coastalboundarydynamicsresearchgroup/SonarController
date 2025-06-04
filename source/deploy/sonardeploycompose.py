@@ -129,6 +129,10 @@ class SonarDeployCompose:
 
 
   def compose_and_deploy(self, sonar):
+    if not sonar.valid:
+      emit_status("Unable to deploy: " + sonar.status, logToProgress=True, options={'deploying':False,'deployrunning':False})
+      return
+
     deployer = SonarDeploy(sonar, sonarFilePath, self.runstate.get_configurationName(), self.runstate.get_configuration(), emit_status)
 
     # All times in seconds.

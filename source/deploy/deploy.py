@@ -14,8 +14,7 @@ def ExecuteDeploy(runstate):
       the deployment to run when a runfile is present.
   """
   deployer = SonarDeployCompose(runstate, debug)
-  sonar = SonarCommChannel(runstate)
-  with sonar:
+  with SonarCommChannel(runstate) as sonar:
     deployer.compose_and_deploy(sonar)
 
 

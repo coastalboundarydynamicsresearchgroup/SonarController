@@ -78,6 +78,13 @@ Also, add the sonar881 user to some groups.  This will allow it to use devices l
 
 `admin@sonar10:~ $ sudo usermod -a -G adm,dialout,cdrom,sudo,audio,video,plugdev,games,users,netdev,input,spi,i2c,gpio sonar881`
 
+### Make sure the USB tty RS-485 dongle is always found
+
+`lsusb`
+`Bus 001 Device 004: ID 0403:6001 Future Technology Devices International`
+
+`sudo nano /sys/bus/usb-serial/drivers/ftdi_sio/new_id`
+`0403 6001`
 
 ### Permanently mount the USB thumb drive
 
